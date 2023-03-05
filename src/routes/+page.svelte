@@ -1,4 +1,10 @@
-<h1>Welcome to SvelteKit</h1>
-<p>
-  Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-</p>
+<script>
+  import Button from '$lib/Button.svelte';
+  import Settings from '$lib/view/Settings.svelte';
+  import ViewArea from '$lib/view/ViewArea.svelte';
+</script>
+
+<div class="flex fixed inset-0">
+  <Settings />
+  <ViewArea />
+</div>
