@@ -1,7 +1,7 @@
 <script lang="ts">
   import Controls from '$lib/view/Controls.svelte';
   import Frame from './Frame.svelte';
-  import Ticker from './Ticker.svelte';
+  import Ticker from './ticker/HorizontalTicker.svelte';
 </script>
 
 <div class="w-full flex flex-col overflow-y-auto">
