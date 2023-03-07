@@ -6,13 +6,22 @@
   import AudioFile from '$lib/audio/audio';
 
   let file: File | undefined = undefined;
+  let audioFile: AudioFile | null = null;
+
+  audio.subscribe((a) => {
+    audioFile = a;
+  });
 
   const loadFile = () => {
     if (!file) {
       return;
     }
 
-    audio.set(new AudioFile(file));
+    if (audioFile?.blob === file) {
+      audio.update((a) => a);
+    } else {
+      audio.set(new AudioFile(file));
+    }
   };
 </script>
 

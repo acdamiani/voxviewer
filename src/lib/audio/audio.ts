@@ -1,10 +1,8 @@
-import type { Mutable } from '$lib/util/types';
-
 export default class AudioFile {
   private static _ctx: AudioContext | null = null;
-  private _blob: Blob;
-
-  readonly buffer: AudioBuffer | null = null;
+  readonly blob: Blob;
+  private _buffer: AudioBuffer | null = null;
+  private _test = 0;
 
   constructor(blob: Blob) {
     if (AudioFile._ctx === null) {
@@ -16,7 +14,7 @@ export default class AudioFile {
       throw new Error('File size is greater than 25 MB');
     }
 
-    this._blob = blob;
+    this.blob = blob;
   }
 
   private _readFileAsync(): Promise<ArrayBuffer> {
@@ -27,20 +25,19 @@ export default class AudioFile {
       };
       reader.onerror = reject;
 
-      reader.readAsArrayBuffer(this._blob);
+      reader.readAsArrayBuffer(this.blob);
     });
   }
 
   async load(): Promise<AudioBuffer | undefined> {
-    if (this.buffer) {
-      return Promise.resolve(this.buffer);
+    if (this._buffer !== null) {
+      return Promise.resolve(this._buffer);
     }
 
-    const mutableThis = this as Mutable<AudioFile>;
-
     const f = await this._readFileAsync();
-    return AudioFile._ctx
-      ?.decodeAudioData(f)
-      .then((b) => (mutableThis.buffer = b));
+    return AudioFile._ctx?.decodeAudioData(f).then((b) => {
+      this._buffer = b;
+      return b;
+    });
   }
 }

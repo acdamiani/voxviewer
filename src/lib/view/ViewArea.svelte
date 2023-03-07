@@ -1,7 +1,8 @@
 <script lang="ts">
   import Controls from '$lib/view/Controls.svelte';
-  import Frame from './Frame.svelte';
+  import ViewFrame from './ViewFrame.svelte';
   import Ticker from './ticker/HorizontalTicker.svelte';
+  import Waveform from './Waveform.svelte';
 </script>
 
 <div class="w-full flex flex-col overflow-y-auto">
@@ -11,10 +12,12 @@
   </div>
 
   <!--Waveform-->
-  <Frame title="waveform" />
+  <ViewFrame title="waveform">
+    <Waveform />
+  </ViewFrame>
 
   <!--Spectrogram-->
-  <Frame title="spectrogram" />
+  <ViewFrame title="spectrogram" />
 
   <Controls />
 </div>
