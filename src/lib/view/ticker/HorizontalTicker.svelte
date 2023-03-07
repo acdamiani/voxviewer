@@ -5,10 +5,16 @@
 
   let dirty = 0;
 
+  let w: number;
+
   let ticker: Ticker;
   onMount(() => {
     ticker = new Ticker(0, 1, container.clientWidth, 32);
   });
+
+  $: if (container) {
+    ticker = new Ticker(0, 1, w, 32);
+  }
 
   let container: HTMLDivElement;
 </script>
@@ -30,9 +36,13 @@
     ticker = ticker;
   }}
 />
-<div class="relative w-full h-full overflow-x-hidden" bind:this={container}>
+<div
+  class="relative w-full h-full overflow-x-hidden"
+  bind:this={container}
+  bind:clientWidth={w}
+>
   {#if container && ticker.marks}
-    <div class="absolute top-0 left-0 right-0" bind:this={container}>
+    <div class="absolute top-0 left-0 right-0">
       {#each ticker.marks as mark, i}
         {#if mark[1] !== null}
           <span
