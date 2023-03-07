@@ -23,9 +23,11 @@ specifiers:
   unplugin-icons: ^0.15.3
   vite: ^4.0.0
   vite-plugin-wasm-pack: ^0.1.12
+  waveform-data: ^4.3.0
 
 dependencies:
   decimal.js: 10.4.3
+  waveform-data: 4.3.0
 
 devDependencies:
   '@iconify-json/fa6-solid': 1.1.12
@@ -2207,6 +2209,10 @@ packages:
     dependencies:
       vite: 4.1.4
     dev: true
+
+  /waveform-data/4.3.0:
+    resolution: {integrity: sha512-gddZgTV1dM8Mfaqn+mCJjwTAc7O/GbX2LgOrijRCHEGC60ZVdd/qTzrgEcCE5MfBoBPgwQ85huy1icSf5IZY5Q==}
+    dev: false
 
   /webpack-sources/3.2.3:
     resolution: {integrity: sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==}
