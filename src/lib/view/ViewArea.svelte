@@ -6,7 +6,7 @@
 
 <div class="w-full flex flex-col overflow-y-auto">
   <!--Top Markers-->
-  <div class="flex-none basis-12">
+  <div class="flex-none basis-14">
     <Ticker />
   </div>
 

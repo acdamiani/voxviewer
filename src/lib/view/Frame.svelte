@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Loader from '$lib/Loader.svelte';
+
   export let title = 'title';
 </script>
 
@@ -10,4 +12,7 @@
       >{title}</span
     >
   </div>
+  <!--<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <Loader />
+  </div>-->
 </div>

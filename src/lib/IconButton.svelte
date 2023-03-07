@@ -4,6 +4,6 @@
 
 <button class="w-6 h-6 flex items-center justify-center hover:text-white">
   {#if icon}
-    <svelte:component this={icon} class="w-6 h-6" width="" height="" />
+    <svelte:component this={icon} class="w-6 h-6" />
   {/if}
 </button>
