@@ -1,25 +1,69 @@
-import type { Mutable } from '$lib/utli/types';
+import type { Mutable } from '$lib/util/types';
 import decimal from 'decimal.js';
+import { zoom, pan } from '$lib/stores';
+import {
+  HORIZONTAL_TICKER_PADDING,
+  WAVEFORM_BASE_SAMPLES_PER_PIXEL,
+} from '$lib/util/constants';
+import { get } from 'svelte/store';
 
-const SECONDS_PER_ZOOM_UNIT = 10;
-const ZOOM_FAC = 2;
+export type TickerConfig = {
+  containerWidth: number;
+  sampleRate: number;
+  containerPadding?: number;
+  samplesPerPixel?: number;
+};
 
+// TOOD: Clean this up!
 export default class Ticker {
-  private _pan: decimal = new decimal(0);
-  private _zoom: decimal = new decimal(0);
-  private _cw: decimal = new decimal(0);
-  private _cp: decimal = new decimal(0);
-  private _time: decimal = new decimal(0);
+  private _pan = new decimal(0);
+  private _time = new decimal(0);
+  private _tf: decimal;
+  private _cw: decimal;
+  private _cp: decimal;
+
+  private _gotPanInitial = false;
+  private _gotZoomInitial = false;
 
   readonly marks: [number, number | null][] | null;
 
-  constructor(pan: number, zoom: number, width: number, padding: number) {
-    this.marks = [];
-    this._zoom = decimal.max(0, zoom);
-    this._time = this._zoom.mul(SECONDS_PER_ZOOM_UNIT);
+  constructor(config: TickerConfig) {
+    const values = {
+      containerPadding: HORIZONTAL_TICKER_PADDING,
+      samplesPerPixel: WAVEFORM_BASE_SAMPLES_PER_PIXEL,
+      ...config,
+    };
 
-    this.pan(pan);
-    this.container(width, padding);
+    this.marks = [];
+
+    this._cw = new decimal(values.containerWidth);
+    this._cp = new decimal(values.containerPadding);
+    this._tf = this._cw
+      .minus(this._cp)
+      .times(values.samplesPerPixel)
+      .div(values.sampleRate);
+    this._time = this._tf.times(get(zoom));
+    this._pan = this._time.div(this._cw.minus(this._cp)).times(get(pan));
+
+    pan.subscribe((pan) => {
+      if (!this._gotPanInitial) {
+        this._gotPanInitial = true;
+        return;
+      }
+
+      this._pan = this._time.div(this._cw.minus(this._cp)).times(pan);
+      this._calc();
+    });
+
+    zoom.subscribe((zoom) => {
+      if (!this._gotZoomInitial) {
+        this._gotZoomInitial = true;
+        return;
+      }
+
+      this._time = this._tf.times(zoom);
+      this._calc();
+    });
 
     this._calc();
   }
@@ -65,31 +109,5 @@ export default class Ticker {
       v = v.plus(s.times(ps));
       l = l.plus(s);
     }
-  }
-
-  pan(pan: decimal.Value) {
-    this._pan = decimal.max(0, this._pan.plus(this._zoom.times(pan)));
-    this._calc();
-  }
-
-  zoomIn() {
-    this._zoom = this._zoom.div(ZOOM_FAC);
-    this._time = this._zoom.mul(SECONDS_PER_ZOOM_UNIT);
-    this._calc();
-
-    console.log(this._zoom.toNumber());
-  }
-
-  zoomOut() {
-    this._zoom = this._zoom.mul(ZOOM_FAC);
-    this._time = this._zoom.mul(SECONDS_PER_ZOOM_UNIT);
-    this._calc();
-
-    console.log(this._zoom.toNumber());
-  }
-
-  container(width: number, padding: number) {
-    this._cw = decimal.max(0, width);
-    this._cp = decimal.max(0, padding);
   }
 }

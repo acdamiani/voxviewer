@@ -1,19 +1,23 @@
 <script lang="ts">
-  import decimal from 'decimal.js';
-  import { onMount } from 'svelte';
-  import Ticker from './ticker';
-
-  let dirty = 0;
+  import Ticker, { type TickerConfig } from './ticker';
+  import { zoom, pan, buffer } from '$lib/stores';
 
   let w: number;
+  let sampleRate: number | undefined;
 
-  let ticker: Ticker;
-  onMount(() => {
-    ticker = new Ticker(0, 1, container.clientWidth, 32);
+  buffer.subscribe((b) => {
+    sampleRate = b?.sampleRate;
   });
 
-  $: if (container) {
-    ticker = new Ticker(0, 1, w, 32);
+  let ticker: Ticker;
+
+  $: if (container && sampleRate) {
+    const config: TickerConfig = {
+      containerWidth: w,
+      sampleRate: sampleRate,
+    };
+
+    ticker = new Ticker(config);
   }
 
   let container: HTMLDivElement;
@@ -24,15 +28,14 @@
     if (e.ctrlKey) {
       if (Math.abs(e.deltaY) > 100) {
         if (Math.sign(e.deltaY) === -1) {
-          ticker.zoomIn();
+          zoom.zoomIn();
         } else {
-          ticker.zoomOut();
+          zoom.zoomOut();
         }
       }
     } else {
-      ticker.pan(e.deltaY / 500);
+      pan.update((p) => p + e.deltaY);
     }
-
     ticker = ticker;
   }}
 />
@@ -41,9 +44,9 @@
   bind:this={container}
   bind:clientWidth={w}
 >
-  {#if container && ticker.marks}
+  {#if container && ticker?.marks}
     <div class="absolute top-0 left-0 right-0">
-      {#each ticker.marks as mark, i}
+      {#each ticker.marks as mark}
         {#if mark[1] !== null}
           <span
             class="absolute flex flex-col gap-[1px] items-center w-[2px]"

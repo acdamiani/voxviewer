@@ -1,40 +1,45 @@
 <script lang="ts">
-  import Loader from '$lib/Loader.svelte';
-  import { audio } from '$lib/stores';
-
   import { getContext, onMount } from 'svelte';
-  import WaveformData from 'waveform-data';
+
+  import { buffer, zoom, pan } from '$lib/stores';
+  import Loader from '$lib/Loader.svelte';
   import WaveformRenderer from './waveform';
 
-  const context: any = getContext('canvas');
+  const { getCanvas }: { getCanvas: () => HTMLCanvasElement } =
+    getContext('canvas');
   let renderer: WaveformRenderer;
-
-  onMount(() => {
-    renderer = new WaveformRenderer(context.getCanvas() as HTMLCanvasElement);
-  });
 
   let loading = false;
 
-  audio.subscribe((a) => {
-    if (!a) {
-      return;
-    }
+  let zoomValue: number;
+  let panValue: number;
+  let bufferValue: AudioBuffer | null;
 
+  zoom.subscribe((z) => {
+    zoomValue = z;
+  });
+
+  pan.subscribe((p) => {
+    panValue = p;
+  });
+
+  buffer.subscribe((b) => {
+    bufferValue = b;
+  });
+
+  $: if (zoomValue && bufferValue && renderer) {
     loading = true;
+    renderer.render(bufferValue, zoomValue, panValue).then(() => {
+      loading = false;
+    });
+  }
 
-    a.load()
-      .then((b) => {
-        if (!b) {
-          throw new Error('Could not load audio buffer');
-        }
-        return renderer.render(b);
-      })
-      .then(() => {
-        loading = false;
-      });
+  onMount(() => {
+    renderer = new WaveformRenderer(getCanvas());
   });
 </script>
 
+<div class="flex-0 basis-16" />
 {#if loading}
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
     <Loader />

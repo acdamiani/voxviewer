@@ -1,11 +1,10 @@
 export default class AudioFile {
-  private static _ctx: AudioContext | null = null;
+  private static _ctx: AudioContext;
   readonly blob: Blob;
   private _buffer: AudioBuffer | null = null;
-  private _test = 0;
 
   constructor(blob: Blob) {
-    if (AudioFile._ctx === null) {
+    if (!AudioFile._ctx) {
       AudioFile._ctx = new AudioContext();
     }
 
@@ -29,13 +28,13 @@ export default class AudioFile {
     });
   }
 
-  async load(): Promise<AudioBuffer | undefined> {
+  async load(): Promise<AudioBuffer> {
     if (this._buffer !== null) {
       return Promise.resolve(this._buffer);
     }
 
     const f = await this._readFileAsync();
-    return AudioFile._ctx?.decodeAudioData(f).then((b) => {
+    return AudioFile._ctx.decodeAudioData(f).then((b) => {
       this._buffer = b;
       return b;
     });

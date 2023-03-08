@@ -17,9 +17,7 @@
       return;
     }
 
-    if (audioFile?.blob === file) {
-      audio.update((a) => a);
-    } else {
+    if (audioFile?.blob !== file) {
       audio.set(new AudioFile(file));
     }
   };
