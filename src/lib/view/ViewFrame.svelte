@@ -3,9 +3,11 @@
   import { setContext } from 'svelte';
 
   let htmlCanvas: HTMLCanvasElement;
+  let offscreenCanvas: HTMLCanvasElement;
 
   setContext('canvas', {
     getCanvas: () => htmlCanvas,
+    getOffscreenCanvas: () => offscreenCanvas,
   });
 
   let w: number, h: number;
@@ -26,6 +28,7 @@
     bind:clientHeight={h}
   >
     <canvas class="absolute top-0 left-0" bind:this={htmlCanvas} />
+    <canvas hidden bind:this={offscreenCanvas} />
   </div>
   <div
     class="absolute top-0 left-8 bg-zinc-800 rounded-b-lg opacity-50 px-4 py-1"

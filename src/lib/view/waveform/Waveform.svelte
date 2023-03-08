@@ -5,8 +5,13 @@
   import Loader from '$lib/Loader.svelte';
   import WaveformRenderer from './waveform';
 
-  const { getCanvas }: { getCanvas: () => HTMLCanvasElement } =
-    getContext('canvas');
+  const {
+    getCanvas,
+    getOffscreenCanvas,
+  }: {
+    getCanvas: () => HTMLCanvasElement;
+    getOffscreenCanvas: () => HTMLCanvasElement;
+  } = getContext('canvas');
   let renderer: WaveformRenderer;
 
   let loading = false;
@@ -35,7 +40,7 @@
   }
 
   onMount(() => {
-    renderer = new WaveformRenderer(getCanvas());
+    renderer = new WaveformRenderer(getCanvas(), getOffscreenCanvas());
   });
 </script>
 
