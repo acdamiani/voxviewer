@@ -1,6 +1,5 @@
 import { WAVEFORM_BASE_SAMPLES_PER_PIXEL } from '$lib/util/constants';
 import WaveformData from 'waveform-data';
-import { zoom } from '$lib/stores';
 
 export default class WaveformRenderer {
   readonly canvas: HTMLCanvasElement;
@@ -47,13 +46,19 @@ export default class WaveformRenderer {
       for (let x = 0; x < data.length; x++) {
         const val = channel.max_sample(x);
 
-        ctx.lineTo(x, this._scaleHeight(val, this.offscreenCanvas.height));
+        ctx.lineTo(
+          x + 0.5,
+          this._scaleHeight(val, this.offscreenCanvas.height) + 0.5,
+        );
       }
 
       for (let x = data.length - 1; x >= 0; x--) {
         const val = channel.min_sample(x);
 
-        ctx.lineTo(x, this._scaleHeight(val, this.offscreenCanvas.height));
+        ctx.lineTo(
+          x + 0.5,
+          this._scaleHeight(val, this.offscreenCanvas.height) + 0.5,
+        );
       }
 
       ctx.closePath();
@@ -72,8 +77,8 @@ export default class WaveformRenderer {
     if (data.length - offset < this.canvas.width) {
       ctx.strokeStyle = 'rgb(20 184 166)';
       ctx.beginPath();
-      ctx.moveTo(0, this.canvas.height / 2);
-      ctx.lineTo(data.length - offset, this.canvas.height / 2);
+      ctx.moveTo(data.length - offset - 1, this.canvas.height / 2);
+      ctx.lineTo(this.canvas.width, this.canvas.height / 2);
       ctx.closePath();
       ctx.stroke();
     }
