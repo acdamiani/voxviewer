@@ -1,4 +1,4 @@
-import { WAVEFORM_BASE_SAMPLES_PER_PIXEL } from '$lib/util/constants';
+import { WAVEFORM_BASE_SAMPLES_PER_PIXEL, ZOOM_FAC } from '$lib/util/constants';
 import WaveformData from 'waveform-data';
 
 export default class WaveformRenderer {
@@ -103,7 +103,9 @@ export default class WaveformRenderer {
     }
 
     return this._waveform.then((waveform) => {
-      const resampled = waveform.resample({ scale: waveform.scale * zoom });
+      const resampled = waveform.resample({
+        scale: waveform.scale + ZOOM_FAC * (zoom ** 2 - 1),
+      });
       this._draw(resampled, Math.round(pan), zoom !== this._lastZoom);
       this._lastZoom = zoom;
     });

@@ -27,6 +27,6 @@
   class="flex-none basis-96 border-r-2 border-zinc-800 flex flex-col p-4 gap-2"
 >
   <h2 class="font-bold text-lg">Settings</h2>
-  <FileInput readFileResult={(f) => (file = f)} />
+  <FileInput readFileResult={(f) => (file = f)} accept="audio/*" />
   <Button disabled={!file} on:click={loadFile}>Load</Button>
 </div>

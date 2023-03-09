@@ -6,6 +6,8 @@
   let w: number;
   let h: number;
 
+  let sd = 0;
+
   let zoomValue: number;
   subscribe(zoom, (zoom: number) => {
     zoomValue = zoom;
@@ -43,15 +45,25 @@
 </script>
 
 <svelte:window
-  on:wheel|nonpassive|preventDefault={(e) => {
+  on:wheel|nonpassive|preventDefault|stopPropagation={(e) => {
+    const now = Date.now();
+
     if (e.ctrlKey) {
-      if (Math.abs(e.deltaY) > 100) {
-        if (Math.sign(e.deltaY) === -1) {
-          zoom.zoomIn();
-        } else {
-          zoom.zoomOut();
-        }
+      if (now - sd < 10) {
+        return;
       }
+
+      const direction = e.detail < 0 || e.deltaY > 0 ? 1 : -1;
+
+      if (direction === -1) {
+        zoom.zoomIn();
+        console.log('zooming in');
+      } else {
+        zoom.zoomOut();
+        console.log('zooming out');
+      }
+
+      sd = now;
     } else {
       pan.update((p) => p + e.deltaY);
     }

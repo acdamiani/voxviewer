@@ -5,12 +5,12 @@ const zoomStore = () => {
   const { update, subscribe } = writable(1);
 
   const zoomIn = () => {
-    update((z) => (z <= 1 ? z : z / 2));
+    update((z) => (z <= 1 ? z : z - 1));
   };
 
   const zoomOut = () => {
     update((z) => {
-      return z >= 32 ? z : z * 2;
+      return z >= 128 ? z : z + 1;
     });
   };
 
