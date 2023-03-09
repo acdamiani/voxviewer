@@ -44,7 +44,7 @@
   });
 </script>
 
-<div class="flex-0 basis-16" />
+<div class="flex-none basis-16" />
 {#if loading}
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
     <Loader />

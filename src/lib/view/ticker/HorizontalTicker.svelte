@@ -1,26 +1,46 @@
 <script lang="ts">
   import Ticker, { type TickerConfig } from './ticker';
   import { zoom, pan, buffer } from '$lib/stores';
+  import { get } from 'svelte/store';
+  import { subscribe } from 'svelte/internal';
 
   let w: number;
-  let sampleRate: number | undefined;
+  let h: number;
 
-  buffer.subscribe((b) => {
-    sampleRate = b?.sampleRate;
+  let zoomValue: number;
+  subscribe(zoom, (zoom: number) => {
+    zoomValue = zoom;
   });
 
-  let ticker: Ticker;
+  let panValue: number;
+  subscribe(pan, (pan: number) => {
+    panValue = pan;
+  });
 
-  $: if (container && sampleRate) {
+  let sampleRate: number;
+  subscribe(buffer, (buffer: AudioBuffer) => {
+    sampleRate = buffer?.sampleRate;
+  });
+
+  let canvas: HTMLCanvasElement;
+
+  let ticker: Ticker;
+  $: if (ticker) ticker.render(zoomValue, panValue);
+
+  $: if (canvas && sampleRate) {
     const config: TickerConfig = {
-      containerWidth: w,
+      canvas: canvas,
       sampleRate: sampleRate,
     };
 
     ticker = new Ticker(config);
+    ticker.render(zoomValue, panValue);
   }
 
-  let container: HTMLDivElement;
+  $: if (canvas) {
+    canvas.width = w;
+    canvas.height = h;
+  }
 </script>
 
 <svelte:window
@@ -36,9 +56,14 @@
     } else {
       pan.update((p) => p + e.deltaY);
     }
-    ticker = ticker;
   }}
 />
+
+<div class="relative w-full h-full" bind:clientWidth={w} bind:clientHeight={h}>
+  <canvas class="absolute top-0 left-0" bind:this={canvas} />
+</div>
+
+<!--
 <div
   class="relative w-full h-full overflow-x-hidden"
   bind:this={container}
@@ -66,4 +91,4 @@
       {/each}
     </div>
   {/if}
-</div>
+</div>-->

@@ -1,113 +1,155 @@
 import type { Mutable } from '$lib/util/types';
 import decimal from 'decimal.js';
-import { zoom, pan } from '$lib/stores';
 import {
   HORIZONTAL_TICKER_PADDING,
   WAVEFORM_BASE_SAMPLES_PER_PIXEL,
 } from '$lib/util/constants';
-import { get } from 'svelte/store';
 
 export type TickerConfig = {
-  containerWidth: number;
+  canvas: HTMLCanvasElement;
   sampleRate: number;
-  containerPadding?: number;
+  padding?: number;
   samplesPerPixel?: number;
 };
 
 // TOOD: Clean this up!
 export default class Ticker {
-  private _pan = new decimal(0);
-  private _time = new decimal(0);
-  private _tf: decimal;
-  private _cw: decimal;
-  private _cp: decimal;
+  private _canvas: HTMLCanvasElement;
 
-  private _gotPanInitial = false;
-  private _gotZoomInitial = false;
-
-  readonly marks: [number, number | null][] | null;
+  private _padding: number;
+  private _sampleRate: number;
+  private _samplesPerPixel: number;
 
   constructor(config: TickerConfig) {
     const values = {
-      containerPadding: HORIZONTAL_TICKER_PADDING,
+      padding: HORIZONTAL_TICKER_PADDING,
       samplesPerPixel: WAVEFORM_BASE_SAMPLES_PER_PIXEL,
       ...config,
     };
 
-    this.marks = [];
-
-    this._cw = new decimal(values.containerWidth);
-    this._cp = new decimal(values.containerPadding);
-    this._tf = this._cw
-      .minus(this._cp)
-      .times(values.samplesPerPixel)
-      .div(values.sampleRate);
-    this._time = this._tf.times(get(zoom));
-    this._pan = this._time.div(this._cw.minus(this._cp)).times(get(pan));
-
-    pan.subscribe((pan) => {
-      if (!this._gotPanInitial) {
-        this._gotPanInitial = true;
-        return;
-      }
-
-      this._pan = this._time.div(this._cw.minus(this._cp)).times(pan);
-      this._calc();
-    });
-
-    zoom.subscribe((zoom) => {
-      if (!this._gotZoomInitial) {
-        this._gotZoomInitial = true;
-        return;
-      }
-
-      this._time = this._tf.times(zoom);
-      this._calc();
-    });
-
-    this._calc();
+    this._canvas = values.canvas;
+    this._padding = values.padding;
+    this._samplesPerPixel = values.samplesPerPixel;
+    this._sampleRate = values.sampleRate;
   }
 
-  private _calc() {
-    const mutableThis = this as Mutable<Ticker>;
+  // private _calc() {
+  //   const mutableThis = this as Mutable<Ticker>;
 
-    const t = this._time;
+  //   const t = this._time;
 
-    const sp = t.div(this._cw.minus(this._cp));
-    const ps = this._cw.minus(this._cp).div(t);
-    const p = decimal.pow(10, decimal.floor(decimal.log10(t)).minus(1));
+  //   const sp = t.div(this._cw.minus(this._cp));
+  //   const ps = this._cw.minus(this._cp).div(t);
+  //   const p = decimal.pow(10, decimal.floor(decimal.log10(t)).minus(1));
 
-    const min = this._pan.minus(sp.times(this._cp));
-    const max = t.plus(this._pan);
+  //   const min = this._pan.minus(sp.times(this._cp));
+  //   const max = t.plus(this._pan);
 
-    let s: decimal;
-    let fac: 2 | 5;
+  //   let s: decimal;
+  //   let fac: 2 | 5;
 
-    if (decimal.abs(t.minus(p)).lessThan(decimal.abs(t.minus(p.mul(5))))) {
-      s = p.div(2);
-      fac = 2;
+  //   if (decimal.abs(t.minus(p)).lessThan(decimal.abs(t.minus(p.mul(5))))) {
+  //     s = p.div(2);
+  //     fac = 2;
+  //   } else {
+  //     s = p;
+  //     fac = 5;
+  //   }
+
+  //   const st = min.toNearest(s);
+  //   const stf = min.toNearest(s.times(fac));
+
+  //   let l = st;
+  //   let v = st.minus(min).mul(ps);
+
+  //   mutableThis.marks = [];
+
+  //   const j = st.minus(stf).divToInt(s).toNumber();
+
+  //   for (let i = j; l.lessThanOrEqualTo(max); i++) {
+  //     mutableThis.marks.push([
+  //       v.toNumber(),
+  //       i % fac === 0 ? l.toNumber() : null,
+  //     ]);
+  //     v = v.plus(s.times(ps));
+  //     l = l.plus(s);
+  //   }
+  // }
+
+  render(zoom: number, pan: number) {
+    const width = new decimal(this._canvas.width);
+    const padding = new decimal(this._padding);
+    const widthNoPadding = width.minus(padding);
+    const samplesPerPixel = this._samplesPerPixel * zoom;
+    const samples = widthNoPadding.mul(samplesPerPixel);
+    const sampleRate = new decimal(this._sampleRate);
+
+    const extent = samples.div(this._sampleRate);
+    const pixelsPerSecond = sampleRate.div(samplesPerPixel);
+    const tickerPan = new decimal(samplesPerPixel * pan).div(sampleRate);
+    const min = tickerPan.minus(padding.mul(samplesPerPixel).div(sampleRate));
+    const max = tickerPan.plus(extent);
+
+    let step: decimal;
+    let significantFactor: 2 | 5;
+
+    const factor = decimal.pow(
+      10,
+      decimal.floor(decimal.log10(extent)).minus(1),
+    );
+
+    if (
+      decimal
+        .abs(extent.minus(factor))
+        .lessThan(decimal.abs(extent.minus(factor.mul(5))))
+    ) {
+      step = factor.div(2);
+      significantFactor = 2;
     } else {
-      s = p;
-      fac = 5;
+      step = factor;
+      significantFactor = 5;
     }
 
-    const st = min.toNearest(s);
-    const stf = min.toNearest(s.times(fac));
+    const pixelStep = step.mul(pixelsPerSecond);
 
-    let l = st;
-    let v = st.minus(min).mul(ps);
+    const startingTicker = min.toNearest(step);
+    const startingSigTicker = min.toNearest(step.times(significantFactor));
 
-    mutableThis.marks = [];
+    let time = startingTicker;
+    let position = startingTicker.minus(min).mul(pixelsPerSecond);
 
-    const j = st.minus(stf).divToInt(s).toNumber();
+    const significantOffset = startingSigTicker
+      .minus(startingTicker)
+      .div(step)
+      .toNumber();
 
-    for (let i = j; l.lessThanOrEqualTo(max); i++) {
-      mutableThis.marks.push([
-        v.toNumber(),
-        i % fac === 0 ? l.toNumber() : null,
-      ]);
-      v = v.plus(s.times(ps));
-      l = l.plus(s);
+    const ctx = this._canvas.getContext('2d');
+
+    if (!ctx) {
+      throw new Error('Error intializing canvas context');
+    }
+
+    ctx.font =
+      'bold 12px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"';
+    ctx.textAlign = 'center';
+    ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+    let sig = false;
+    let x = 0;
+
+    for (let i = -significantOffset; time.lessThanOrEqualTo(max); i++) {
+      sig = i % significantFactor === 0;
+      x = decimal.round(position).toNumber();
+
+      ctx.fillStyle = sig ? 'rgb(113 113 122)' : 'rgb(39 39 42)';
+      ctx.fillRect(x - 1, 0, 2, sig ? 32 : 8);
+
+      if (sig) {
+        ctx.fillText(time.toString(), x, 48);
+      }
+
+      time = time.plus(step);
+      position = position.plus(pixelStep);
     }
   }
 }
