@@ -1,4 +1,3 @@
-import type { Mutable } from '$lib/util/types';
 import decimal from 'decimal.js';
 import {
   HORIZONTAL_TICKER_PADDING,
@@ -12,7 +11,6 @@ export type TickerConfig = {
   samplesPerPixel?: number;
 };
 
-// TOOD: Clean this up!
 export default class Ticker {
   private _canvas: HTMLCanvasElement;
 
@@ -32,49 +30,6 @@ export default class Ticker {
     this._samplesPerPixel = values.samplesPerPixel;
     this._sampleRate = values.sampleRate;
   }
-
-  // private _calc() {
-  //   const mutableThis = this as Mutable<Ticker>;
-
-  //   const t = this._time;
-
-  //   const sp = t.div(this._cw.minus(this._cp));
-  //   const ps = this._cw.minus(this._cp).div(t);
-  //   const p = decimal.pow(10, decimal.floor(decimal.log10(t)).minus(1));
-
-  //   const min = this._pan.minus(sp.times(this._cp));
-  //   const max = t.plus(this._pan);
-
-  //   let s: decimal;
-  //   let fac: 2 | 5;
-
-  //   if (decimal.abs(t.minus(p)).lessThan(decimal.abs(t.minus(p.mul(5))))) {
-  //     s = p.div(2);
-  //     fac = 2;
-  //   } else {
-  //     s = p;
-  //     fac = 5;
-  //   }
-
-  //   const st = min.toNearest(s);
-  //   const stf = min.toNearest(s.times(fac));
-
-  //   let l = st;
-  //   let v = st.minus(min).mul(ps);
-
-  //   mutableThis.marks = [];
-
-  //   const j = st.minus(stf).divToInt(s).toNumber();
-
-  //   for (let i = j; l.lessThanOrEqualTo(max); i++) {
-  //     mutableThis.marks.push([
-  //       v.toNumber(),
-  //       i % fac === 0 ? l.toNumber() : null,
-  //     ]);
-  //     v = v.plus(s.times(ps));
-  //     l = l.plus(s);
-  //   }
-  // }
 
   render(zoom: number, pan: number) {
     const width = new decimal(this._canvas.width);

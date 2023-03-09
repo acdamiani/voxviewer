@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { SvelteComponent } from 'svelte';
-
   export let disabled = false;
 </script>
 

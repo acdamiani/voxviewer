@@ -1,7 +1,5 @@
 <script>
-  import Button from '$lib/Button.svelte';
   import DropdownButton from '$lib/DropdownButton.svelte';
-  import MenuButton from '$lib/MenuButton.svelte';
   import OptionsSection from '$lib/OptionsSection.svelte';
   import PlaybackControls from './PlaybackControls.svelte';
 </script>

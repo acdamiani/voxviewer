@@ -9,8 +9,9 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "lint": "prettier --plugin-search-dir . --check . && eslint .",
-    "format": "prettier --plugin-search-dir . --write ."
+    "lint": "eslint --ignore-path .gitignore \"./src/**/*.+(ts|js|svelte)\"",
+    "lint-fix": "eslint --ignore-path .gitignore --fix \"./src/**/*.+(ts|js|svelte)\"",
+    "format": "prettier --ignore-path .gitignore \"./src/**/*.+(ts|js|svelte|html)\" --write"
   },
   "devDependencies": {
     "@iconify-json/fa6-solid": "^1.1.12",

@@ -1,5 +1,4 @@
 <script>
-  import Button from '$lib/Button.svelte';
   import Settings from '$lib/view/Settings.svelte';
   import ViewArea from '$lib/view/ViewArea.svelte';
 </script>

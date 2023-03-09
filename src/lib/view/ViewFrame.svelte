@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Loader from '$lib/Loader.svelte';
   import { setContext } from 'svelte';
 
   let htmlCanvas: HTMLCanvasElement;
