@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
+  import { fade, fly } from 'svelte/transition';
 
   import IconChevronUp from '~icons/octicon/chevron-up';
 

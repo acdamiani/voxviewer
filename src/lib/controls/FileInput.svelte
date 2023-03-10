@@ -36,7 +36,7 @@
     Upload
   </div>
   <div
-    class="w-48 bg-transparent border border-slate-300 group-hover:border-slate-400 dark:border-gray-600 dark:group-hover:border-gray-500 rounded-r-lg outline-none dark:text-white px-2 h-8 whitespace-nowrap overflow-x-auto flex items-center cursor-pointer"
+    class="w-full bg-transparent border-2 border-l-0 border-zinc-800 group-hover:border-zinc-700 rounded-r-lg outline-none dark:text-white px-2 h-8 whitespace-nowrap overflow-x-auto flex items-center cursor-pointer"
   >
     {#if files?.[0]}
       {files[0].name}

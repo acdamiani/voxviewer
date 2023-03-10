@@ -12,13 +12,14 @@
     <slot name="label">Check</slot>
   </label>
   <button
+    class="outline-none ring-2 ring-transparent focus-visible:ring-teal-500 rounded-md"
     role="checkbox"
     aria-checked={checked}
     on:click={() => (checked = !checked)}
   >
     <input class="peer" type="checkbox" {checked} hidden id={label} />
     <div
-      class="w-5 h-5 border-2 rounded-md border-zinc-800 hover:border-zinc-700 peer-checked:border-teal-500 peer-checked:bg-teal-500 flex items-center justify-center p-1 text-white"
+      class="w-5 h-5 border-2 rounded-md border-zinc-800 peer-hover:border-zinc-700 hover:border-zinc-700 peer-checked:border-none peer-checked:bg-teal-500 flex items-center justify-center p-1 text-white"
     >
       {#if checked}
         <IconCheck class="" />
