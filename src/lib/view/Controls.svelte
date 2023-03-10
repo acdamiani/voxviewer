@@ -1,5 +1,8 @@
 <script>
-  import DropdownButton from '$lib/DropdownButton.svelte';
+  import Checkbox from '$lib/controls/Checkbox.svelte';
+  import DropdownButton from '$lib/controls/DropdownButton.svelte';
+  import MultiButton from '$lib/controls/MultiButton.svelte';
+  import SmallButton from '$lib/controls/SmallButton.svelte';
   import OptionsSection from '$lib/OptionsSection.svelte';
   import PlaybackControls from './PlaybackControls.svelte';
 </script>
@@ -16,6 +19,15 @@
       <span slot="button">Save</span>
       <OptionsSection>
         <span slot="title">Waveform</span>
+        <Checkbox>
+          <span slot="label">Full view</span>
+        </Checkbox>
+        <MultiButton>
+          <span slot="label">Download</span>
+          <SmallButton>svg</SmallButton>
+          <SmallButton>png</SmallButton>
+          <SmallButton>jpg</SmallButton>
+        </MultiButton>
       </OptionsSection>
       <OptionsSection>
         <span slot="title">Spectrogram</span>

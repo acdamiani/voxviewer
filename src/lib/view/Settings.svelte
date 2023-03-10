@@ -1,8 +1,8 @@
 <script lang="ts">
   import { audio } from '$lib/stores';
 
-  import Button from '$lib/Button.svelte';
-  import FileInput from '$lib/FileInput.svelte';
+  import Button from '$lib/controls/Button.svelte';
+  import FileInput from '$lib/controls/FileInput.svelte';
   import AudioFile from '$lib/audio/audio';
 
   let file: File | undefined = undefined;
