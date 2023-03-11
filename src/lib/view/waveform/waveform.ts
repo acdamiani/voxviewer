@@ -71,6 +71,7 @@ export default class WaveformRenderer {
       throw new Error('Error intializing waveform canvas');
     }
 
+    ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     ctx.drawImage(this.offscreenCanvas, -offset, 0);
 

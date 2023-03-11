@@ -3,27 +3,31 @@
 
   import IconCheck from '~icons/octicon/check';
 
+  export let defaultChecked = false;
+
   let label = shortid.generate();
-  let checked = false;
+  let checked = defaultChecked;
 </script>
 
 <div class="flex justify-between items-center">
   <label class="text-sm pointer" for={label}>
     <slot name="label">Check</slot>
   </label>
-  <button
-    class="outline-none ring-2 ring-transparent focus-visible:ring-teal-500 rounded-md"
-    role="checkbox"
-    aria-checked={checked}
-    on:click={() => (checked = !checked)}
-  >
-    <input class="peer" type="checkbox" {checked} hidden id={label} />
-    <div
-      class="w-5 h-5 border-2 rounded-md border-zinc-800 peer-hover:border-zinc-700 hover:border-zinc-700 peer-checked:border-none peer-checked:bg-teal-500 flex items-center justify-center p-1 text-white"
+  <div class="flex flex-1 max-w-[12rem]">
+    <button
+      class="outline-none ring-2 ring-transparent focus-visible:ring-teal-500 rounded-md"
+      role="checkbox"
+      aria-checked={checked}
+      on:click={() => (checked = !checked)}
     >
-      {#if checked}
-        <IconCheck class="" />
-      {/if}
-    </div>
-  </button>
+      <input class="peer" type="checkbox" {checked} hidden id={label} />
+      <div
+        class="w-5 h-5 border-2 rounded-md border-zinc-800 peer-hover:border-zinc-700 hover:border-zinc-700 peer-checked:border-none peer-checked:bg-teal-500 flex items-center justify-center p-1 text-white"
+      >
+        {#if checked}
+          <IconCheck class="" />
+        {/if}
+      </div>
+    </button>
+  </div>
 </div>
