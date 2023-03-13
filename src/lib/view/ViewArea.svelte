@@ -3,6 +3,7 @@
   import ViewFrame from './ViewFrame.svelte';
   import Ticker from './ticker/HorizontalTicker.svelte';
   import Waveform from './waveform/Waveform.svelte';
+  import Spectrogram from './spectrogram/Spectrogram.svelte';
 </script>
 
 <div class="w-full flex flex-col overflow-y-auto">
@@ -17,7 +18,9 @@
   </ViewFrame>
 
   <!--Spectrogram-->
-  <ViewFrame title="spectrogram" />
+  <ViewFrame title="spectrogram">
+    <Spectrogram />
+  </ViewFrame>
 
   <Controls />
 </div>

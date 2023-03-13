@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext, onMount } from 'svelte';
 
-  import { buffer, zoom, pan } from '$lib/stores';
+  import { zoom, pan, audio } from '$lib/stores';
   import Loader from '$lib/Loader.svelte';
   import WaveformRenderer from './waveform';
 
@@ -11,14 +11,18 @@
   }: {
     getCanvas: () => HTMLCanvasElement;
     getOffscreenCanvas: () => HTMLCanvasElement;
-  } = getContext('canvas');
+  } = getContext('__pyv_canvas');
+
+  const { setError }: { setError: (err: Error | null) => void } =
+    getContext('__pyv_error');
+
   let renderer: WaveformRenderer;
 
   let loading = false;
 
   let zoomValue: number;
   let panValue: number;
-  let bufferValue: AudioBuffer | null;
+  let buffer: AudioBuffer;
 
   zoom.subscribe((z) => {
     zoomValue = z;
@@ -28,13 +32,24 @@
     panValue = p;
   });
 
-  buffer.subscribe((b) => {
-    bufferValue = b;
+  audio.subscribe((a) => {
+    if (!a) {
+      return;
+    }
+
+    a.load()
+      .then((b) => {
+        buffer = b;
+        setError(null);
+      })
+      .catch((e) => {
+        setError(e);
+      });
   });
 
-  $: if (zoomValue && bufferValue && renderer) {
+  $: if (zoomValue && buffer && renderer) {
     loading = true;
-    renderer.render(bufferValue, zoomValue, panValue).then(() => {
+    renderer.render(buffer, zoomValue, panValue).then(() => {
       loading = false;
     });
   }

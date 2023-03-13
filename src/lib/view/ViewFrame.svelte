@@ -1,12 +1,17 @@
 <script lang="ts">
+  import ViewError from '$lib/error/ViewError.svelte';
   import { setContext } from 'svelte';
 
   let htmlCanvas: HTMLCanvasElement;
   let offscreenCanvas: HTMLCanvasElement;
 
-  setContext('canvas', {
+  setContext('__pyv_canvas', {
     getCanvas: () => htmlCanvas,
     getOffscreenCanvas: () => offscreenCanvas,
+  });
+
+  setContext('__pyv_error', {
+    setError: (err: Error | null) => (error = err),
   });
 
   let w: number, h: number;
@@ -17,10 +22,16 @@
   }
 
   export let title = 'title';
+
+  let error: Error | null = null;
 </script>
 
 <div class="h-full min-h-[16rem] relative border-t-2 border-zinc-800 flex">
-  <slot />
+  {#if error}
+    <ViewError {error} />
+  {:else}
+    <slot />
+  {/if}
   <div
     class="relative w-full h-full"
     bind:clientWidth={w}
