@@ -6,7 +6,7 @@ use std::{
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Window {
     Rectangular,
     Bartlett,

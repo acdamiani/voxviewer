@@ -1,4 +1,6 @@
-use realfft::RealFftPlanner;
+use std::sync::Arc;
+
+use realfft::{num_complex::Complex, RealFftPlanner, RealToComplex};
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -6,74 +8,136 @@ use crate::{
     win::{Window, WindowData},
 };
 
+struct SpectrogramComputationConfig {
+    buffer: Vec<f32>,
+
+    samples: usize,
+    windows: usize,
+    bins: usize,
+
+    fft: Arc<dyn RealToComplex<f32>>,
+
+    input: Box<[f32]>,
+    output: Box<[Complex<f32>]>,
+
+    window_data: WindowData,
+
+    consumer: SampleConsumer,
+}
+
+impl SpectrogramComputationConfig {
+    pub fn new(spectrogram: &mut Spectrogram, buffer: &WasmSampleBuffer) -> Self {
+        let buffer_len = buffer.buffer().len();
+        let win_size = spectrogram.win_size as usize;
+
+        let fft_len = win_size * spectrogram.zero_pad_fac as usize;
+        let padding = ((spectrogram.win_size * (spectrogram.zero_pad_fac - 1)) / 2) as usize;
+
+        let bins = (fft_len / 2) as usize;
+        let samples = buffer_len + buffer_len % win_size;
+        let windows = samples / (win_size * 2 - 1);
+
+        let fft = spectrogram.planner.plan_fft_forward(fft_len);
+
+        let mut input_vec = fft.make_input_vec();
+        input_vec.fill(0.0);
+
+        let input_slice = &input_vec[padding..(padding + win_size)];
+
+        let output_vec = fft.make_output_vec();
+        let output_slice = &output_vec[..(output_vec.len() - 1)];
+
+        Self {
+            fft,
+            samples,
+            windows,
+            bins,
+            buffer: buffer.buffer(),
+            input: input_slice.into(),
+            output: output_slice.into(),
+            consumer: SampleConsumer::new(win_size),
+            window_data: WindowData::new(spectrogram.win_func, win_size),
+        }
+    }
+}
+
 #[wasm_bindgen]
 pub struct Spectrogram {
-    buffer: Vec<f32>,
     data: Vec<f32>,
+
+    win_size: u32,
+    zero_pad_fac: u32,
+    win_func: Window,
+
+    planner: RealFftPlanner<f32>,
+
+    config: Option<SpectrogramComputationConfig>,
 }
 
 #[wasm_bindgen]
 impl Spectrogram {
     #[wasm_bindgen(constructor)]
-    pub fn new(buffer: &WasmSampleBuffer) -> Self {
-        Self {
-            buffer: buffer.buffer(),
-            data: Vec::new(),
-        }
-    }
-
-    pub fn compute(
-        &mut self,
-        win_size: u32,
-        zero_pad_fac: u32,
-        win_func: Window,
-    ) -> Result<*const f32, JsError> {
+    pub fn new(win_size: u32, zero_pad_fac: u32, win_func: Window) -> Result<Spectrogram, JsError> {
         if !win_size.is_power_of_two() {
             return Err(JsError::new("win_size should be a power of two"));
-        } else if zero_pad_fac.is_power_of_two() {
+        } else if !zero_pad_fac.is_power_of_two() {
             return Err(JsError::new("zero_pad_fac should be a power of two"));
         }
 
-        let win_usize = win_size as usize;
+        Ok(Self {
+            data: Vec::new(),
+            planner: RealFftPlanner::new(),
+            win_size,
+            zero_pad_fac,
+            win_func,
+            config: None,
+        })
+    }
 
-        let fft_len = win_size * zero_pad_fac;
-        let padding = ((win_size * (zero_pad_fac - 1)) / 2) as usize;
+    pub fn initialize(&mut self, buffer: &WasmSampleBuffer) -> () {
+        self.config = Some(SpectrogramComputationConfig::new(self, buffer));
+    }
 
-        let num_bins = (fft_len / 2) as usize;
-        let samples = self.buffer.len() + self.buffer.len() % win_usize;
-        let windows = samples / win_usize;
+    pub fn windows(&self) -> Result<u32, JsError> {
+        match &self.config {
+            Some(config) => Ok(config.windows as u32),
+            None => Err(JsError::new(
+                "a call to windows() should be preceded by an intialize() call",
+            )),
+        }
+    }
 
-        let mut vec: Vec<f32> = Vec::with_capacity(windows * num_bins);
+    pub fn bins(&self) -> Result<u32, JsError> {
+        match &self.config {
+            Some(config) => Ok(config.bins as u32),
+            None => Err(JsError::new(
+                "a call to bins() should be preceded by an initialize() call",
+            )),
+        }
+    }
 
-        let mut planner: RealFftPlanner<f32> = RealFftPlanner::new();
-        let fft = planner.plan_fft_forward(fft_len as usize);
+    pub fn compute(&mut self) -> Result<*const f32, JsError> {
+        if self.config.is_none() {
+            return Err(JsError::new(
+                "a call to compute() should be preceded by an initialize() call",
+            ));
+        }
 
-        let mut input = fft.make_input_vec();
-        let mut output = fft.make_output_vec();
+        let config = self.config.as_mut().unwrap();
 
-        // Probably unnecessary
-        input[..padding].fill(0.0);
-        input[padding..].fill(0.0);
-
-        let window = WindowData::new(win_func, win_usize);
-        let mut consumer = SampleConsumer::new(win_usize);
+        let mut vec: Vec<f32> = Vec::with_capacity(config.windows * config.bins);
 
         let mut sample: f32;
         let mut scratch: Option<&[f32]>;
-        for i in 0..samples {
-            sample = *self.buffer.get(i).unwrap_or(&0.0);
-            scratch = consumer.consume(sample);
+        for i in 0..config.samples {
+            sample = *config.buffer.get(i).unwrap_or(&0.0);
+            scratch = config.consumer.consume(sample);
 
             match scratch {
                 Some(s) => {
-                    window.apply(s, &mut input[padding..s.len()]);
-                    fft.process(&mut input, &mut output)?;
-                    vec.extend(
-                        output
-                            .iter()
-                            .map(|x| 10.0 * x.norm_sqr().log10())
-                            .take(output.len() - 1),
-                    );
+                    config.window_data.apply(s, &mut config.input);
+                    config.fft.process(&mut config.input, &mut config.output)?;
+                    vec.extend(config.output.iter().map(|x| 10.0 * x.norm_sqr().log10()));
                 }
                 None => {}
             }
