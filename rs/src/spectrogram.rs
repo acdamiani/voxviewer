@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{borrow::BorrowMut, sync::Arc};
 
 use realfft::{num_complex::Complex, RealFftPlanner, RealToComplex};
 use wasm_bindgen::prelude::*;
@@ -35,7 +35,7 @@ impl SpectrogramComputationConfig {
 
         let bins = (fft_len / 2) as usize;
         let samples = buffer_len + buffer_len % win_size;
-        let windows = samples / (win_size * 2 - 1);
+        let windows = samples / win_size * 2;
 
         let fft = spectrogram.planner.plan_fft_forward(fft_len);
 
@@ -142,7 +142,9 @@ impl Spectrogram {
                             .output
                             .iter()
                             .take(config.output.len() - 1)
-                            .map(|x| 10.0 * x.norm_sqr().log10()),
+                            // https://dsp.stackexchange.com/questions/32076/fft-to-spectrum-in-decibel
+                            .map(|x| x.norm() * 2.0 / config.window_data.sum())
+                            .map(|x| 20.0 * (x.log10())),
                     );
                 }
                 None => {}

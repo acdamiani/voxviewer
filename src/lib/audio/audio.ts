@@ -39,6 +39,7 @@ export class WasmAudioBuffer {
   ): Promise<void> {
     const channel = new WasmSampleBuffer(this.length, (arr: Float32Array) => {
       buffer.copyFromChannel(arr, channelNumber);
+      console.log('length', arr.length);
     });
 
     this._channels.push(channel);

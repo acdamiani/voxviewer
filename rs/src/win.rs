@@ -22,12 +22,17 @@ pub enum Window {
 
 pub struct WindowData {
     factors: Box<[f32]>,
+    sum: f32,
 }
 
 impl WindowData {
     pub fn new(window_func: Window, len: usize) -> Self {
+        let factors = WindowData::window(window_func, len).into_boxed_slice();
+        let sum = factors.iter().sum();
+
         Self {
-            factors: WindowData::window(window_func, len).into_boxed_slice(),
+            factors: factors,
+            sum: sum,
         }
     }
 
@@ -38,6 +43,10 @@ impl WindowData {
         for i in 0..output.len() {
             output[i] = input[i] * self.factors[i];
         }
+    }
+
+    pub fn sum(&self) -> f32 {
+        self.sum
     }
 
     fn window(window_func: Window, len: usize) -> Vec<f32> {
