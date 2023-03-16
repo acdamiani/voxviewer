@@ -45,7 +45,7 @@ impl SpectrogramComputationConfig {
         let input_slice = &input_vec[padding..(padding + win_size)];
 
         let output_vec = fft.make_output_vec();
-        let output_slice = &output_vec[..(output_vec.len() - 1)];
+        let output_slice = output_vec.as_slice();
 
         Self {
             fft,
@@ -137,7 +137,13 @@ impl Spectrogram {
                 Some(s) => {
                     config.window_data.apply(s, &mut config.input);
                     config.fft.process(&mut config.input, &mut config.output)?;
-                    vec.extend(config.output.iter().map(|x| 10.0 * x.norm_sqr().log10()));
+                    vec.extend(
+                        config
+                            .output
+                            .iter()
+                            .take(config.output.len() - 1)
+                            .map(|x| 10.0 * x.norm_sqr().log10()),
+                    );
                 }
                 None => {}
             }
@@ -145,6 +151,10 @@ impl Spectrogram {
 
         self.data = vec;
         Ok(self.data.as_ptr())
+    }
+
+    pub fn data_ptr(&self) -> *const f32 {
+        self.data.as_ptr()
     }
 }
 

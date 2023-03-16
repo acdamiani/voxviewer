@@ -1,5 +1,6 @@
 import { WasmSampleBuffer, Spectrogram } from 'rs';
 import type { InitOutput } from 'rs';
+import type { SpectrogramOptions } from './spectrogram-data';
 
 const windowMap = {
   bartlett: 1, // Window.Bartlett
@@ -14,53 +15,21 @@ const windowMap = {
   welch: 9, // Window.Welch
 } as const;
 
-type WindowFunction = keyof typeof windowMap;
-
-export type SpectrogramOptions = {
-  windowSize: number;
-  zeroPaddingFactor?: number;
-  windowFunction?: WindowFunction;
-};
-
-type GenerateSpectrogramResult = {
-  buffer: Float32Array;
-  windows: number;
-  bins: number;
-};
+export type WindowFunction = keyof typeof windowMap;
 
 // TODO: return a `WaveformData` like class instead of a raw Float32Array
 export function generateSpectrogram(
-  initResult: InitOutput,
   buffer: WasmSampleBuffer,
-  {
-    windowSize,
-    zeroPaddingFactor = 1,
-    windowFunction = 'hann',
-  }: SpectrogramOptions,
-): GenerateSpectrogramResult {
-  const windowFunctionEnum = windowMap[windowFunction];
-
+  options: Required<SpectrogramOptions>,
+): Spectrogram {
   // Figure out how I can only create a new spectrogram when settings change
   const spectrogram = new Spectrogram(
-    windowSize,
-    zeroPaddingFactor,
-    windowFunctionEnum,
+    options.windowSize,
+    options.zeroPaddingFactor,
+    windowMap[options.windowFunction],
   );
   spectrogram.initialize(buffer);
+  spectrogram.compute();
 
-  const windows = spectrogram.windows();
-  const bins = spectrogram.bins();
-
-  const ptr = spectrogram.compute();
-  const result = new Float32Array(
-    initResult.memory.buffer,
-    ptr,
-    windows * bins,
-  );
-
-  return {
-    windows: windows,
-    bins: bins,
-    buffer: result,
-  };
+  return spectrogram;
 }

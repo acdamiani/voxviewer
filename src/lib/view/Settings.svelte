@@ -58,7 +58,7 @@
     <option>32</option>
   </Select>
   <Checkbox defaultChecked={true}>
-    <span slot="label">Overlap</span>
+    <span slot="label">Welch Overlap</span>
   </Checkbox>
   <Button disabled={!file} on:click={loadFile}>Load</Button>
 </div>

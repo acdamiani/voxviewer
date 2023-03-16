@@ -1,10 +1,17 @@
 <script lang="ts">
-  import { audio } from '$lib/stores';
-  import { getContext } from 'svelte';
-  import {
-    generateSpectrogram,
-    type SpectrogramOptions,
-  } from './spectrogram-gen';
+  import { buffer, initResult } from '$lib/stores';
+  import { get } from 'svelte/store';
+  import { getContext, onMount } from 'svelte';
+  import SpectrogramRenderer from './spectrogram';
+  import SpectrogramData from './spectrogram-data';
+
+  const {
+    getCanvas,
+    getOffscreenCanvas,
+  }: {
+    getCanvas: () => HTMLCanvasElement;
+    getOffscreenCanvas: () => HTMLCanvasElement;
+  } = getContext('__pyv_canvas');
 
   const {
     setError,
@@ -12,31 +19,43 @@
     setError: (err: Error | null) => void;
   } = getContext('__pyv_error');
 
-  let buffer: AudioBuffer;
+  let data: SpectrogramData;
+  let renderer: SpectrogramRenderer;
 
-  $: if (buffer) {
-    const options: SpectrogramOptions = {
-      windowSize: 1024,
-      zeroPaddingFactor: 1,
-      windowFunction: 'hann',
-    };
-
-    console.log(generateSpectrogram(buffer, options));
+  $: if (data) {
+    try {
+      renderer.render(data, 0);
+    } catch (e: any) {
+      setError(e);
+    }
   }
 
-  audio.subscribe((a) => {
-    if (!a) {
+  buffer.subscribe((b) => {
+    if (!b) {
       return;
     }
 
-    a.load()
-      .then((b) => {
-        buffer = b;
-        setError(null);
+    const result = get(initResult);
+
+    if (!result) {
+      throw new Error('Wasm instance was not initialized');
+    }
+
+    SpectrogramData.createFromAudioBuffer(result, b, {
+      windowSize: 1024,
+    })
+      .then((spectrogramData) => {
+        data = spectrogramData;
       })
-      .catch((e) => {
+      .catch((e: Error) => {
         setError(e);
       });
+
+    setError(null);
+  });
+
+  onMount(() => {
+    renderer = new SpectrogramRenderer(getCanvas(), getOffscreenCanvas());
   });
 </script>
 

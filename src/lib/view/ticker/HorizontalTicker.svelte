@@ -2,6 +2,7 @@
   import Ticker, { type TickerConfig } from './ticker';
   import { zoom, pan, buffer } from '$lib/stores';
   import { subscribe } from 'svelte/internal';
+  import type { WasmAudioBuffer } from '$lib/audio/audio';
 
   let w: number;
   let h: number;
@@ -19,7 +20,7 @@
   });
 
   let sampleRate: number;
-  subscribe(buffer, (buffer: AudioBuffer) => {
+  subscribe(buffer, (buffer: WasmAudioBuffer) => {
     sampleRate = buffer?.sampleRate;
   });
 
