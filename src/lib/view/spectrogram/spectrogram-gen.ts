@@ -1,5 +1,5 @@
-import init, { WasmSampleBuffer, Spectrogram, Window } from 'rs';
-import type { Reverser } from '$lib/util/types';
+import { WasmSampleBuffer, Spectrogram } from 'rs';
+import type { InitOutput } from 'rs';
 
 const windowMap = {
   bartlett: 1, // Window.Bartlett
@@ -22,40 +22,45 @@ export type SpectrogramOptions = {
   windowFunction?: WindowFunction;
 };
 
+type GenerateSpectrogramResult = {
+  buffer: Float32Array;
+  windows: number;
+  bins: number;
+};
+
+// TODO: return a `WaveformData` like class instead of a raw Float32Array
 export function generateSpectrogram(
-  buffer: AudioBuffer,
+  initResult: InitOutput,
+  buffer: WasmSampleBuffer,
   {
     windowSize,
     zeroPaddingFactor = 1,
     windowFunction = 'hann',
   }: SpectrogramOptions,
-): Promise<Float32Array> {
+): GenerateSpectrogramResult {
   const windowFunctionEnum = windowMap[windowFunction];
 
-  return init().then((initResult) => {
-    const wasmBuffer = new WasmSampleBuffer(
-      buffer.length,
-      (arr: Float32Array) => {
-        buffer.copyFromChannel(arr, 0);
-      },
-    );
+  // Figure out how I can only create a new spectrogram when settings change
+  const spectrogram = new Spectrogram(
+    windowSize,
+    zeroPaddingFactor,
+    windowFunctionEnum,
+  );
+  spectrogram.initialize(buffer);
 
-    // Figure out how I can only create a new spectrogram when settings change
-    const spectrogram = new Spectrogram(
-      windowSize,
-      zeroPaddingFactor,
-      windowFunctionEnum,
-    );
-    spectrogram.initialize(wasmBuffer);
+  const windows = spectrogram.windows();
+  const bins = spectrogram.bins();
 
-    const windows = spectrogram.windows();
-    const bins = spectrogram.bins();
+  const ptr = spectrogram.compute();
+  const result = new Float32Array(
+    initResult.memory.buffer,
+    ptr,
+    windows * bins,
+  );
 
-    console.log(windows);
-    console.log(bins);
-
-    const ptr = spectrogram.compute();
-
-    return new Float32Array(initResult.memory.buffer, ptr, windows * bins);
-  });
+  return {
+    windows: windows,
+    bins: bins,
+    buffer: result,
+  };
 }

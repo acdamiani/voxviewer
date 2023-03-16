@@ -39,7 +39,7 @@
 
     a.load()
       .then((b) => {
-        buffer = b;
+        buffer = b.buffer;
         setError(null);
       })
       .catch((e) => {
