@@ -1,4 +1,4 @@
-import { WAVEFORM_BASE_SAMPLES_PER_PIXEL } from '$lib/util/constants';
+import { WAVEFORM_BASE_SAMPLES_PER_PIXEL, ZOOM_FAC } from '$lib/util/constants';
 import type SpectrogramData from './spectrogram-data';
 
 export default class SpectrogramRenderer {
@@ -10,49 +10,84 @@ export default class SpectrogramRenderer {
     this.offscreenCanvas = offscreenCanvas;
   }
 
+  private _generateImageData(
+    ctx: CanvasRenderingContext2D,
+    data: SpectrogramData,
+    channel: number,
+    zoom: number,
+  ) {
+    const samplesPerPixel =
+      WAVEFORM_BASE_SAMPLES_PER_PIXEL + ZOOM_FAC * (zoom ** 2 - 1);
+
+    const channelData = data.channelData(channel);
+
+    const windows = channelData.windows;
+    const bins = channelData.bins;
+    const buffer = data.channelData(channel).buffer;
+
+    const windowsInView = Math.floor(
+      (ctx.canvas.width * samplesPerPixel * 2) / data.windowSize,
+    );
+
+    const imageData = ctx.createImageData(
+      1 * Math.min(ctx.canvas.width, windowsInView),
+      1 * Math.min(ctx.canvas.height, bins),
+    );
+
+    const fac = [windowsInView / imageData.width, bins / imageData.height];
+
+    const pixels = imageData.data;
+
+    const offset = 20;
+    const range = 80;
+
+    let currentWindow: number;
+    let currentBin: number;
+
+    let value: number;
+    for (let x = 0; x < imageData.width; x++) {
+      currentWindow = fac[0] <= 1 ? x : Math.floor(x * fac[0]);
+
+      for (let y = 0; y < imageData.height; y++) {
+        currentBin = fac[1] <= 1 ? y : Math.floor(y * fac[1]);
+
+        value =
+          255 -
+          ((buffer[currentWindow * data.windowSize + currentBin] + offset) /
+            -range) *
+            255;
+
+        const arrOffset = ((imageData.height - y) * imageData.width + x) * 4;
+        pixels[arrOffset] = value;
+        pixels[arrOffset + 1] = value;
+        pixels[arrOffset + 2] = value;
+        pixels[arrOffset + 3] = 255;
+      }
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+    ctx.globalCompositeOperation = 'copy';
+    ctx.drawImage(
+      ctx.canvas,
+      0,
+      0,
+      imageData.width,
+      imageData.height,
+      0,
+      0,
+      ctx.canvas.width,
+      ctx.canvas.height,
+    );
+  }
+
   render(data: SpectrogramData, channel: number, zoom: number) {
-    const spectrogram = data.channelData(channel);
-    const step = data.windowSize / 2;
-    const buffer = spectrogram.buffer;
     const ctx = this.canvas.getContext('2d');
 
     if (!ctx) {
       throw new Error('Error initializing spectrogram canvas');
     }
 
-    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    const samplesPerPixel = zoom * WAVEFORM_BASE_SAMPLES_PER_PIXEL;
-    const pixelsPerWindow = data.windowSize / samplesPerPixel;
-    const pixelsPerBin = this.canvas.height / spectrogram.bins;
-    const visibleWindows = Math.min(
-      Math.ceil(this.canvas.width / pixelsPerWindow),
-      spectrogram.windows,
-    );
-
-    console.log('samp', samplesPerPixel);
-    console.log('windowSize', data.windowSize);
-    console.log('pixelsPerWindow', pixelsPerWindow);
-    console.log('visibleWindows', visibleWindows);
-
-    const offset = 20;
-    const range = 80;
-
-    let value: number;
-    for (let x = 0; x < visibleWindows; x++) {
-      for (let y = 0; y < spectrogram.bins; y++) {
-        value = 255 - ((buffer[x * step + y] + offset) / -range) * 255;
-
-        if (x === 23 && y == 63) {
-          console.log(value);
-        }
-
-        const xPos = x * pixelsPerWindow;
-        const yPos = this.canvas.height - y * pixelsPerBin;
-
-        ctx.fillStyle = `rgb(${value} ${value} ${value})`;
-        ctx.fillRect(xPos, yPos, pixelsPerWindow, pixelsPerBin);
-      }
-    }
+    ctx.imageSmoothingEnabled = false;
+    this._generateImageData(ctx, data, channel, zoom);
   }
 }

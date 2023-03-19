@@ -14,6 +14,7 @@ struct SpectrogramComputationConfig {
     samples: usize,
     windows: usize,
     bins: usize,
+    padding: usize,
 
     fft: Arc<dyn RealToComplex<f32>>,
 
@@ -34,15 +35,14 @@ impl SpectrogramComputationConfig {
         let padding = ((spectrogram.win_size * (spectrogram.zero_pad_fac - 1)) / 2) as usize;
 
         let bins = (fft_len / 2) as usize;
-        let samples = buffer_len + buffer_len % win_size;
-        let windows = samples / win_size * 2;
+        let samples = buffer_len + buffer_len % (win_size / 2);
+        let windows = samples / win_size * 2 - 1;
 
         let fft = spectrogram.planner.plan_fft_forward(fft_len);
 
         let mut input_vec = fft.make_input_vec();
         input_vec.fill(0.0);
-
-        let input_slice = &input_vec[padding..(padding + win_size)];
+        let input_slice = input_vec.as_slice();
 
         let output_vec = fft.make_output_vec();
         let output_slice = output_vec.as_slice();
@@ -52,6 +52,7 @@ impl SpectrogramComputationConfig {
             samples,
             windows,
             bins,
+            padding,
             buffer: buffer.buffer(),
             input: input_slice.into(),
             output: output_slice.into(),
@@ -135,7 +136,10 @@ impl Spectrogram {
 
             match scratch {
                 Some(s) => {
-                    config.window_data.apply(s, &mut config.input);
+                    config.window_data.apply(
+                        s,
+                        &mut config.input[config.padding..(config.padding + s.len())],
+                    );
                     config.fft.process(&mut config.input, &mut config.output)?;
                     vec.extend(
                         config

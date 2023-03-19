@@ -79,7 +79,7 @@ export default class SpectrogramData {
     const inputOptions: Required<SpectrogramOptions> = {
       windowSize: options.windowSize,
       windowFunction: options.windowFunction ?? 'hann',
-      zeroPaddingFactor: options.zeroPaddingFactor ?? 1,
+      zeroPaddingFactor: options.zeroPaddingFactor ?? 2,
     };
 
     // TODO: Web Worker support

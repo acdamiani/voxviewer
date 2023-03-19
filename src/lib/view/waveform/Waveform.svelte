@@ -55,7 +55,7 @@
   }
 
   onMount(() => {
-    renderer = new WaveformRenderer(getCanvas(), getOffscreenCanvas());
+    renderer = new WaveformRenderer(getCanvas());
   });
 </script>
 

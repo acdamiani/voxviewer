@@ -47,7 +47,7 @@
     }
 
     SpectrogramData.createFromAudioBuffer(result, b, {
-      windowSize: 1024,
+      windowSize: 2048,
     })
       .then((spectrogramData) => {
         data = spectrogramData;
@@ -64,4 +64,4 @@
   });
 </script>
 
-<div />
+<div class="flex-none basis-16" />
