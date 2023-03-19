@@ -1,4 +1,5 @@
 mod buf;
+mod col;
 mod spectrogram;
 mod utils;
 mod win;

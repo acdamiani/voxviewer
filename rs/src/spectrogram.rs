@@ -1,10 +1,11 @@
-use std::{borrow::BorrowMut, sync::Arc};
+use std::sync::Arc;
 
 use realfft::{num_complex::Complex, RealFftPlanner, RealToComplex};
 use wasm_bindgen::prelude::*;
 
 use crate::{
     buf::WasmSampleBuffer,
+    col::{eval_col, Colorscheme},
     win::{Window, WindowData},
 };
 
@@ -64,11 +65,16 @@ impl SpectrogramComputationConfig {
 
 #[wasm_bindgen]
 pub struct Spectrogram {
-    data: Vec<f32>,
+    data: Vec<u8>,
 
     win_size: u32,
     zero_pad_fac: u32,
     win_func: Window,
+
+    offset: f32,
+    range: f32,
+
+    colorscheme: Colorscheme,
 
     planner: RealFftPlanner<f32>,
 
@@ -78,7 +84,14 @@ pub struct Spectrogram {
 #[wasm_bindgen]
 impl Spectrogram {
     #[wasm_bindgen(constructor)]
-    pub fn new(win_size: u32, zero_pad_fac: u32, win_func: Window) -> Result<Spectrogram, JsError> {
+    pub fn new(
+        win_size: u32,
+        zero_pad_fac: u32,
+        win_func: Window,
+        offset: f32,
+        range: f32,
+        colorscheme: Colorscheme,
+    ) -> Result<Spectrogram, JsError> {
         if !win_size.is_power_of_two() {
             return Err(JsError::new("win_size should be a power of two"));
         } else if !zero_pad_fac.is_power_of_two() {
@@ -91,6 +104,9 @@ impl Spectrogram {
             win_size,
             zero_pad_fac,
             win_func,
+            offset,
+            range,
+            colorscheme,
             config: None,
         })
     }
@@ -117,7 +133,7 @@ impl Spectrogram {
         }
     }
 
-    pub fn compute(&mut self) -> Result<*const f32, JsError> {
+    pub fn compute(&mut self) -> Result<*const u8, JsError> {
         if self.config.is_none() {
             return Err(JsError::new(
                 "a call to compute() should be preceded by an initialize() call",
@@ -126,7 +142,7 @@ impl Spectrogram {
 
         let config = self.config.as_mut().unwrap();
 
-        let mut vec: Vec<f32> = Vec::with_capacity(config.windows * config.bins);
+        let mut vec: Vec<u8> = Vec::with_capacity(config.windows * config.bins * 3);
 
         let mut sample: f32;
         let mut scratch: Option<&[f32]>;
@@ -148,7 +164,13 @@ impl Spectrogram {
                             .take(config.output.len() - 1)
                             // https://dsp.stackexchange.com/questions/32076/fft-to-spectrum-in-decibel
                             .map(|x| x.norm() * 2.0 / config.window_data.sum())
-                            .map(|x| 20.0 * (x.log10())),
+                            .map(|x| 20.0 * (x.log10()))
+                            .map(|x| (x + self.offset) / -self.range)
+                            .map(|x| {
+                                let c = eval_col(self.colorscheme, x as f64);
+                                [c.r, c.g, c.b]
+                            })
+                            .flatten(),
                     );
                 }
                 None => {}
@@ -159,7 +181,7 @@ impl Spectrogram {
         Ok(self.data.as_ptr())
     }
 
-    pub fn data_ptr(&self) -> *const f32 {
+    pub fn data_ptr(&self) -> *const u8 {
         self.data.as_ptr()
     }
 }

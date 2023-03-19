@@ -30,10 +30,7 @@ impl WindowData {
         let factors = WindowData::window(window_func, len).into_boxed_slice();
         let sum = factors.iter().sum();
 
-        Self {
-            factors: factors,
-            sum: sum,
-        }
+        Self { factors, sum }
     }
 
     pub fn apply(&self, input: &[f32], output: &mut [f32]) {

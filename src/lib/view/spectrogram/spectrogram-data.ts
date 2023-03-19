@@ -1,6 +1,6 @@
 import type { WasmSampleBuffer, InitOutput, Spectrogram } from 'rs';
 import type { WasmAudioBuffer } from '$lib/audio/audio';
-import type { WindowFunction } from './spectrogram-gen';
+import type { Colorscheme, WindowFunction } from './spectrogram-gen';
 import { generateSpectrogram } from './spectrogram-gen';
 
 export class SpectrogramDataChannel {
@@ -18,11 +18,11 @@ export class SpectrogramDataChannel {
     this.bins = spectrogram.bins();
   }
 
-  get buffer(): Float32Array {
-    return new Float32Array(
+  get buffer(): Uint8Array {
+    return new Uint8Array(
       this._initResult.memory.buffer,
       this._spectrogram.data_ptr(),
-      this.windows * this.bins,
+      this.windows * this.bins * 3,
     );
   }
 }
@@ -40,6 +40,9 @@ export type SpectrogramOptions = {
   windowSize: number;
   zeroPaddingFactor?: number;
   windowFunction?: WindowFunction;
+  offset?: number;
+  range?: number;
+  colorscheme?: Colorscheme;
 };
 
 export default class SpectrogramData {
@@ -80,6 +83,9 @@ export default class SpectrogramData {
       windowSize: options.windowSize,
       windowFunction: options.windowFunction ?? 'hann',
       zeroPaddingFactor: options.zeroPaddingFactor ?? 2,
+      offset: 20,
+      range: 80,
+      colorscheme: 'magma',
     };
 
     // TODO: Web Worker support

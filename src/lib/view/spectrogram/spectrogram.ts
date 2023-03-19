@@ -38,29 +38,22 @@ export default class SpectrogramRenderer {
 
     const pixels = imageData.data;
 
-    const offset = 20;
-    const range = 80;
-
     let currentWindow: number;
     let currentBin: number;
 
-    let value: number;
+    let i: number;
     for (let x = 0; x < imageData.width; x++) {
       currentWindow = fac[0] <= 1 ? x : Math.floor(x * fac[0]);
 
       for (let y = 0; y < imageData.height; y++) {
         currentBin = fac[1] <= 1 ? y : Math.floor(y * fac[1]);
 
-        value =
-          255 -
-          ((buffer[currentWindow * data.windowSize + currentBin] + offset) /
-            -range) *
-            255;
+        i = (currentWindow * data.windowSize + currentBin) * 3;
 
         const arrOffset = ((imageData.height - y) * imageData.width + x) * 4;
-        pixels[arrOffset] = value;
-        pixels[arrOffset + 1] = value;
-        pixels[arrOffset + 2] = value;
+        pixels[arrOffset] = buffer[i];
+        pixels[arrOffset + 1] = buffer[i + 1];
+        pixels[arrOffset + 2] = buffer[i + 2];
         pixels[arrOffset + 3] = 255;
       }
     }
