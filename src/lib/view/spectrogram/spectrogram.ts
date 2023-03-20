@@ -30,7 +30,7 @@ export default class SpectrogramRenderer {
     );
 
     const imageData = ctx.createImageData(
-      0.5 * Math.min(ctx.canvas.width, windowsInView),
+      1 * Math.min(ctx.canvas.width, windowsInView),
       1 * Math.min(ctx.canvas.height, bins),
     );
 
@@ -53,7 +53,10 @@ export default class SpectrogramRenderer {
       for (let y = 0; y < imageData.height; y++) {
         currentBin = (y * yFac) | 0;
 
-        i = (currentWindow * data.windowSize + currentBin) * 3;
+        i =
+          (currentWindow * ((data.windowSize * data.zeroPaddingFactor) / 2) +
+            currentBin) *
+          3;
 
         const arrOffset = ((imageData.height - y) * imageData.width + x) * 4;
         pixels[arrOffset] = buffer[i];

@@ -82,7 +82,7 @@ export default class SpectrogramData {
     const inputOptions: Required<SpectrogramOptions> = {
       windowSize: options.windowSize,
       windowFunction: options.windowFunction ?? 'hann',
-      zeroPaddingFactor: options.zeroPaddingFactor ?? 2,
+      zeroPaddingFactor: options.zeroPaddingFactor ?? 4,
       offset: 20,
       range: 80,
       colorscheme: 'magma',

@@ -19,7 +19,7 @@ export default class WaveformRenderer {
   }
 
   private _draw(data: WaveformData, offset: number, cache: boolean) {
-    return;
+    // return;
     const ctx = this.canvas.getContext('2d');
 
     if (!ctx) {
