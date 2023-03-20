@@ -30,7 +30,7 @@ export default class SpectrogramRenderer {
     );
 
     const imageData = ctx.createImageData(
-      1 * Math.min(ctx.canvas.width, windowsInView),
+      0.5 * Math.min(ctx.canvas.width, windowsInView),
       1 * Math.min(ctx.canvas.height, bins),
     );
 
@@ -42,11 +42,16 @@ export default class SpectrogramRenderer {
     let currentBin: number;
 
     let i: number;
+
+    const xFac = fac[0] <= 1 ? 1 : fac[0];
+    const yFac = fac[1] <= 1 ? 1 : fac[1];
+
+    const t = performance.now();
     for (let x = 0; x < imageData.width; x++) {
-      currentWindow = fac[0] <= 1 ? x : Math.floor(x * fac[0]);
+      currentWindow = (x * xFac) | 0;
 
       for (let y = 0; y < imageData.height; y++) {
-        currentBin = fac[1] <= 1 ? y : Math.floor(y * fac[1]);
+        currentBin = (y * yFac) | 0;
 
         i = (currentWindow * data.windowSize + currentBin) * 3;
 
@@ -57,6 +62,8 @@ export default class SpectrogramRenderer {
         pixels[arrOffset + 3] = 255;
       }
     }
+
+    console.log('t', performance.now() - t);
 
     ctx.putImageData(imageData, 0, 0);
     ctx.globalCompositeOperation = 'copy';
@@ -81,6 +88,8 @@ export default class SpectrogramRenderer {
     }
 
     ctx.imageSmoothingEnabled = false;
-    this._generateImageData(ctx, data, channel, zoom);
+    window.requestAnimationFrame(() =>
+      this._generateImageData(ctx, data, channel, zoom),
+    );
   }
 }

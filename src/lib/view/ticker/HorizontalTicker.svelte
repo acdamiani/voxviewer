@@ -46,6 +46,24 @@
 </script>
 
 <svelte:window
+  on:keydown|preventDefault|stopPropagation={(e) => {
+    const now = Date.now();
+
+    if (e.ctrlKey) {
+      if (now - sd < 10) {
+        return;
+      }
+
+      switch (e.key) {
+        case '=':
+          zoom.zoomIn();
+          break;
+        case '-':
+          zoom.zoomOut();
+          break;
+      }
+    }
+  }}
   on:wheel|nonpassive|preventDefault|stopPropagation={(e) => {
     const now = Date.now();
 
