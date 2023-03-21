@@ -76,7 +76,7 @@ export default class SpectrogramData {
 
   static async createFromAudioBuffer(
     initResult: InitOutput,
-    buffer: WasmAudioBuffer,
+    buffer: AudioBuffer,
     { webWorker = true, ...options }: SpectrogramDataCreationOptions,
   ): Promise<SpectrogramData> {
     const inputOptions: Required<SpectrogramOptions> = {
@@ -89,11 +89,11 @@ export default class SpectrogramData {
     };
 
     // TODO: Web Worker support
-    let sample: WasmSampleBuffer;
+    const sample: Float32Array = new Float32Array(buffer.length);
     let data: SpectrogramData | null = null;
 
     for (let i = 0; i < buffer.numberOfChannels; i++) {
-      sample = buffer.bufferAt(i);
+      buffer.copyFromChannel(sample, i);
       const output = generateSpectrogram(sample, inputOptions);
 
       data =

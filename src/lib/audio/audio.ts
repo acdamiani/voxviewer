@@ -1,79 +1,9 @@
 import init, { WasmSampleBuffer } from 'rs';
 
-type WasmAudioBufferOptions = {
-  buffer: AudioBuffer;
-  numberOfChannels: number;
-  duration: number;
-  sampleRate: number;
-  length: number;
-};
-
-export class WasmAudioBuffer {
-  readonly buffer: AudioBuffer;
-  readonly numberOfChannels: number;
-  readonly duration: number;
-  readonly sampleRate: number;
-  readonly length: number;
-
-  private _channels: WasmSampleBuffer[];
-
-  private constructor(options: WasmAudioBufferOptions) {
-    // Unfortunately, waveform-data.js will only work if I have an AudioBuffer on the JavaScript side.
-    // This means that I have to keep two copies of the same PCM samples; one on the JavaScript side and one on the WASM side.
-    this.buffer = options.buffer;
-    this.numberOfChannels = options.numberOfChannels;
-    this.duration = options.duration;
-    this.sampleRate = options.sampleRate;
-    this.length = options.length;
-
-    this._channels = [];
-  }
-
-  bufferAt(channel: number): WasmSampleBuffer {
-    return this._channels[channel];
-  }
-
-  private async _load(
-    buffer: AudioBuffer,
-    channelNumber: number,
-  ): Promise<void> {
-    const channel = new WasmSampleBuffer(this.length, (arr: Float32Array) => {
-      buffer.copyFromChannel(arr, channelNumber);
-      console.log('length', arr.length);
-    });
-
-    this._channels.push(channel);
-  }
-
-  static async create(buffer: AudioBuffer): Promise<WasmAudioBuffer> {
-    const wasmBuffer = new WasmAudioBuffer({
-      buffer: buffer,
-      numberOfChannels: buffer.numberOfChannels,
-      duration: buffer.duration,
-      sampleRate: buffer.sampleRate,
-      length: buffer.length,
-    });
-
-    for (let i = 0; i < buffer.numberOfChannels; i++) {
-      await wasmBuffer._load(buffer, i);
-    }
-
-    return wasmBuffer;
-  }
-
-  getChannelData(channel: number): WasmSampleBuffer {
-    if (channel > this.numberOfChannels - 1) {
-      throw new Error(`Channel ${channel} does not exist`);
-    }
-
-    return this._channels[channel];
-  }
-}
-
 export default class AudioFile {
   private static _ctx: AudioContext;
   readonly blob: Blob;
-  private _buffer: WasmAudioBuffer | null = null;
+  private _buffer: AudioBuffer | null = null;
 
   constructor(blob: Blob) {
     if (!AudioFile._ctx) {
@@ -100,21 +30,20 @@ export default class AudioFile {
     });
   }
 
-  get buffer(): WasmAudioBuffer | null {
+  get buffer(): AudioBuffer | null {
     return this._buffer;
   }
 
-  async load(): Promise<WasmAudioBuffer> {
+  async load(): Promise<AudioBuffer> {
     if (this._buffer !== null) {
       return Promise.resolve(this._buffer);
     }
 
     return this._readFileAsync()
       .then((file) => AudioFile._ctx.decodeAudioData(file))
-      .then((buffer) => WasmAudioBuffer.create(buffer))
-      .then((wasmBuffer) => {
-        this._buffer = wasmBuffer;
-        return wasmBuffer;
+      .then((buffer) => {
+        this._buffer = buffer;
+        return buffer;
       });
   }
 }

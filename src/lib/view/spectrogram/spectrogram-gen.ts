@@ -1,7 +1,7 @@
-import { WasmSampleBuffer, Spectrogram } from 'rs';
+import { WasmSampleBuffer, Spectrogram, type InitOutput } from 'rs';
 import type { SpectrogramOptions } from './spectrogram-data';
 
-const windowMap = {
+export const windowMap = {
   rectangular: 0, // Window.Rectangular
   bartlett: 1, // Window.Bartlett
   hamming: 2, // Window.Hamming
@@ -16,7 +16,7 @@ const windowMap = {
 
 export type WindowFunction = keyof typeof windowMap;
 
-const colorschemeMap = {
+export const colorschemeMap = {
   blackWhite: 0, // Colorscheme.BlackWhite
   viridis: 1, // Colorscheme.Viridis
   inferno: 2, // Colorscheme.Inferno
@@ -29,10 +29,18 @@ const colorschemeMap = {
 
 export type Colorscheme = keyof typeof colorschemeMap;
 
+export type GenerateSpectrogramOutput = {
+  spectrogram: Spectrogram;
+  initOutput: InitOutput | null;
+};
+
 export function generateSpectrogram(
-  buffer: WasmSampleBuffer,
+  webWorker: boolean,
+  buffer: Float32Array,
   options: Required<SpectrogramOptions>,
-): Spectrogram {
+): GenerateSpectrogramOutput {
+  const wasmBuffer = new WasmSampleBuffer(buffer);
+
   // Figure out how I can only create a new spectrogram when settings change
   const spectrogram = new Spectrogram(
     options.windowSize,
@@ -43,8 +51,11 @@ export function generateSpectrogram(
     colorschemeMap[options.colorscheme],
   );
 
-  spectrogram.initialize(buffer);
+  spectrogram.initialize(wasmBuffer);
   spectrogram.compute();
 
-  return spectrogram;
+  return {
+    spectrogram: spectrogram,
+    initOutput: webWorker ? null : null,
+  };
 }
