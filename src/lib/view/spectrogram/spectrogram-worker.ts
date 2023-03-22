@@ -1,15 +1,17 @@
 /// <reference lib="webworker" />
 
+// WARNING: Do not move this
+import './worker-url';
+
 import init, { WasmSampleBuffer, Spectrogram, type InitOutput } from 'rs';
-import {
-  colorschemeMap,
-  windowMap,
-  type SpectrogramOptions,
-} from './spectrogram';
+// https://github.com/vitejs/vite/issues/4551#issuecomment-983012078
+import wasmUrl from 'rs/rs_bg.wasm?url';
+import { colorschemeMap, windowMap, type SpectrogramOptions } from './glue';
 
 declare const self: DedicatedWorkerGlobalScope & {
   spectrogram: Spectrogram | null;
   initResult: InitOutput | null;
+  document: { baseURI: string };
 };
 
 type SpectrogramMessage = {
@@ -44,7 +46,7 @@ self.onmessage = (e) => {
 
       self.spectrogram?.free();
 
-      init().then((o) => {
+      init(wasmUrl).then((o) => {
         self.initResult = o;
         self.spectrogram = new Spectrogram(
           options.windowSize,
