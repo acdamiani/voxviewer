@@ -1,5 +1,3 @@
-import init, { WasmSampleBuffer } from 'rs';
-
 export default class AudioFile {
   private static _ctx: AudioContext;
   readonly blob: Blob;

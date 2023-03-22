@@ -1,98 +1,213 @@
-import { WAVEFORM_BASE_SAMPLES_PER_PIXEL, ZOOM_FAC } from '$lib/util/constants';
-import type SpectrogramData from './spectrogram-data';
+import { Spectrogram, WasmSampleBuffer } from 'rs';
+import SpectrogramWorker from './spectrogram-worker?worker';
 
-export default class SpectrogramRenderer {
-  readonly canvas: HTMLCanvasElement;
-  readonly offscreenCanvas: HTMLCanvasElement;
+export const windowMap = {
+  rectangular: 0, // Window.Rectangular
+  bartlett: 1, // Window.Bartlett
+  hamming: 2, // Window.Hamming
+  hann: 3, // Window.Hann
+  blackman: 4, // Window.Blackman
+  welch: 6, // Window.Welch
+  'blackman-harris': 5, // Window.BlackmanHarris
+  'gaussian-2.5': 7, // Window.Gaussian25
+  'gaussian-3.5': 8, // Window.Gaussian35
+  'gaussian-4.5': 9, // Window.Gaussian45
+} as const;
 
-  constructor(canvas: HTMLCanvasElement, offscreenCanvas: HTMLCanvasElement) {
-    this.canvas = canvas;
-    this.offscreenCanvas = offscreenCanvas;
-  }
+export type WindowFunction = keyof typeof windowMap;
 
-  private _generateImageData(
-    ctx: CanvasRenderingContext2D,
-    data: SpectrogramData,
-    channel: number,
-    zoom: number,
+export const colorschemeMap = {
+  blackWhite: 0, // Colorscheme.BlackWhite
+  viridis: 1, // Colorscheme.Viridis
+  inferno: 2, // Colorscheme.Inferno
+  magma: 3, // Colorscheme.Magma
+  plasma: 4, // Colorscheme.Plasma
+  cividis: 5, // Colorscheme.Cividis
+  warm: 6, // Colorscheme.Warm
+  cool: 7, // Colorscheme.Cool
+};
+
+export type Colorscheme = keyof typeof colorschemeMap;
+
+export type SpectrogramOptions = {
+  windowSize: number;
+  zeroPaddingFactor?: number;
+  windowFunction?: WindowFunction;
+  offset?: number;
+  range?: number;
+  colorscheme?: Colorscheme;
+};
+
+function defaultOptions(
+  options: SpectrogramOptions,
+): Required<SpectrogramOptions> {
+  return {
+    windowSize: options.windowSize,
+    zeroPaddingFactor: options.zeroPaddingFactor ?? 1,
+    windowFunction: options.windowFunction ?? 'hann',
+    offset: options.offset ?? 20,
+    range: options.range ?? 80,
+    colorscheme: options.colorscheme ?? 'magma',
+  };
+}
+
+export default class JsSpectrogram {
+  private _spectrogram: Spectrogram | null;
+  private _worker: Worker | null;
+  private _memory: ArrayBuffer | null;
+
+  readonly info: Required<SpectrogramOptions>;
+
+  private constructor(
+    spectrogram: Spectrogram | null,
+    memory: ArrayBuffer | null,
+    worker: Worker | null,
+    info: Required<SpectrogramOptions>,
   ) {
-    const samplesPerPixel =
-      WAVEFORM_BASE_SAMPLES_PER_PIXEL + ZOOM_FAC * (zoom ** 2 - 1);
+    this._spectrogram = spectrogram;
+    this._memory = memory;
+    this._worker = worker;
 
-    const channelData = data.channelData(channel);
-
-    const windows = channelData.windows;
-    const bins = channelData.bins;
-    const buffer = data.channelData(channel).buffer;
-
-    const windowsInView = Math.floor(
-      (ctx.canvas.width * samplesPerPixel * 2) / data.windowSize,
-    );
-
-    const imageData = ctx.createImageData(
-      1 * Math.min(ctx.canvas.width, windowsInView),
-      1 * Math.min(ctx.canvas.height, bins),
-    );
-
-    const fac = [windowsInView / imageData.width, bins / imageData.height];
-
-    const pixels = imageData.data;
-
-    let currentWindow: number;
-    let currentBin: number;
-
-    let i: number;
-
-    const xFac = fac[0] <= 1 ? 1 : fac[0];
-    const yFac = fac[1] <= 1 ? 1 : fac[1];
-
-    const t = performance.now();
-    for (let x = 0; x < imageData.width; x++) {
-      currentWindow = (x * xFac) | 0;
-
-      for (let y = 0; y < imageData.height; y++) {
-        currentBin = (y * yFac) | 0;
-
-        i =
-          (currentWindow * ((data.windowSize * data.zeroPaddingFactor) / 2) +
-            currentBin) *
-          3;
-
-        const arrOffset = ((imageData.height - y) * imageData.width + x) * 4;
-        pixels[arrOffset] = buffer[i];
-        pixels[arrOffset + 1] = buffer[i + 1];
-        pixels[arrOffset + 2] = buffer[i + 2];
-        pixels[arrOffset + 3] = 255;
-      }
+    if (this._spectrogram && !this._memory) {
+      throw new Error(
+        'ArrayBuffer WebAssembly memory required when using synchronous spectrogram generation',
+      );
     }
 
-    console.log('t', performance.now() - t);
+    this.info = info;
+  }
 
-    ctx.putImageData(imageData, 0, 0);
-    ctx.globalCompositeOperation = 'copy';
-    ctx.drawImage(
-      ctx.canvas,
-      0,
-      0,
-      imageData.width,
-      imageData.height,
-      0,
-      0,
-      ctx.canvas.width,
-      ctx.canvas.height,
+  private _getWorkerValue<T>(value: string): Promise<T> {
+    const worker = this._worker;
+
+    if (!worker) {
+      throw new Error('Cannot get worker value when worker is null');
+    }
+
+    return new Promise((resolve, reject) => {
+      worker.onerror = (e) => {
+        reject(e);
+      };
+
+      worker.onmessage = (e) => {
+        if (e.data.type === 'result') {
+          resolve(e.data.result as T);
+        }
+      };
+
+      worker.postMessage({
+        type: value,
+      });
+    });
+  }
+
+  private async _workerBufferHelper(): Promise<{
+    memory: ArrayBuffer;
+    ptr: number;
+    len: number;
+  }> {
+    const memory = await this._getWorkerValue<ArrayBuffer>('memory');
+    const ptr = await this._getWorkerValue<number>('ptr');
+    const bins = await this._getWorkerValue<number>('bins');
+    const windows = await this._getWorkerValue<number>('windows');
+
+    return {
+      memory: memory,
+      ptr: ptr,
+      len: bins * windows * 3,
+    };
+  }
+
+  get bins(): Promise<number> {
+    if (this._spectrogram) {
+      return Promise.resolve(this._spectrogram.bins());
+    } else if (this._worker) {
+      return this._getWorkerValue<number>('bins');
+    }
+
+    throw new Error(
+      'Provided neither a spectrogram on the main thread or a web worker',
     );
   }
 
-  render(data: SpectrogramData, channel: number, zoom: number) {
-    const ctx = this.canvas.getContext('2d');
-
-    if (!ctx) {
-      throw new Error('Error initializing spectrogram canvas');
+  get windows(): Promise<number> {
+    if (this._spectrogram) {
+      return Promise.resolve(this._spectrogram.windows());
+    } else if (this._worker) {
+      return this._getWorkerValue<number>('windows');
     }
 
-    ctx.imageSmoothingEnabled = false;
-    window.requestAnimationFrame(() =>
-      this._generateImageData(ctx, data, channel, zoom),
+    throw new Error(
+      'Provided neither a spectrogram on the main thread or a web worker',
     );
+  }
+
+  get buffer(): Promise<Uint8Array> {
+    if (this._spectrogram && this._memory) {
+      return Promise.resolve(
+        new Uint8Array(
+          this._memory,
+          this._spectrogram.data_ptr(),
+          this._spectrogram.windows() * this._spectrogram.bins() * 3,
+        ),
+      );
+    } else if (this._worker) {
+      return this._workerBufferHelper().then((v) => {
+        return new Uint8Array(v.memory, v.ptr, v.len);
+      });
+    }
+
+    throw new Error(
+      'Provided neither a spectrogram on the main thread or a web worker',
+    );
+  }
+
+  static async generateWithWorker(
+    samples: Float32Array,
+    options: SpectrogramOptions,
+  ): Promise<JsSpectrogram> {
+    const inputOptions = defaultOptions(options);
+
+    const worker = new SpectrogramWorker();
+
+    worker.postMessage({
+      type: 'gen',
+      samples: samples,
+      options: inputOptions,
+    });
+
+    return new Promise((resolve, reject) => {
+      worker.onerror = (e) => {
+        reject(e);
+      };
+
+      worker.onmessage = (e) => {
+        if (e.data.type === 'success') {
+          resolve(new JsSpectrogram(null, null, worker, inputOptions));
+        }
+      };
+    });
+  }
+
+  static generate(
+    memory: ArrayBuffer,
+    samples: Float32Array,
+    options: SpectrogramOptions,
+  ): JsSpectrogram {
+    const inputOptions = defaultOptions(options);
+
+    const spectrogram = new Spectrogram(
+      inputOptions.windowSize,
+      inputOptions.zeroPaddingFactor,
+      windowMap[inputOptions.windowFunction],
+      inputOptions.offset,
+      inputOptions.range,
+      colorschemeMap[inputOptions.colorscheme],
+    );
+
+    spectrogram.initialize(new WasmSampleBuffer(samples));
+    spectrogram.compute();
+
+    return new JsSpectrogram(spectrogram, memory, null, inputOptions);
   }
 }

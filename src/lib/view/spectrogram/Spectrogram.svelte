@@ -2,7 +2,7 @@
   import { buffer, initResult, zoom } from '$lib/stores';
   import { get } from 'svelte/store';
   import { getContext, onMount } from 'svelte';
-  import SpectrogramRenderer from './spectrogram';
+  import SpectrogramRenderer from './spectrogram-renderer';
   import SpectrogramData from './spectrogram-data';
 
   const {
