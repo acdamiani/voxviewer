@@ -3,6 +3,8 @@ use std::sync::Arc;
 use realfft::{num_complex::Complex, RealFftPlanner, RealToComplex};
 use wasm_bindgen::prelude::*;
 
+use js_sys::Uint8Array;
+
 use crate::{
     buf::WasmSampleBuffer,
     col::{eval_col, Colorscheme},
@@ -65,8 +67,6 @@ impl SpectrogramComputationConfig {
 
 #[wasm_bindgen]
 pub struct Spectrogram {
-    data: Vec<u8>,
-
     win_size: u32,
     zero_pad_fac: u32,
     win_func: Window,
@@ -99,7 +99,6 @@ impl Spectrogram {
         }
 
         Ok(Self {
-            data: Vec::new(),
             planner: RealFftPlanner::new(),
             win_size,
             zero_pad_fac,
@@ -133,7 +132,7 @@ impl Spectrogram {
         }
     }
 
-    pub fn compute(&mut self) -> Result<*const u8, JsError> {
+    pub fn compute(&mut self, buffer: &Uint8Array) -> Result<(), JsError> {
         if self.config.is_none() {
             return Err(JsError::new(
                 "a call to compute() should be preceded by an initialize() call",
@@ -142,7 +141,10 @@ impl Spectrogram {
 
         let config = self.config.as_mut().unwrap();
 
+        // TODO: use Uint8Array directly
         let mut vec: Vec<u8> = Vec::with_capacity(config.windows * config.bins * 3);
+
+        let byte = 0;
 
         let mut sample: f32;
         let mut scratch: Option<&[f32]>;
@@ -177,12 +179,9 @@ impl Spectrogram {
             }
         }
 
-        self.data = vec;
-        Ok(self.data.as_ptr())
-    }
+        buffer.copy_from(&vec);
 
-    pub fn data_ptr(&self) -> *const u8 {
-        self.data.as_ptr()
+        Ok(())
     }
 }
 

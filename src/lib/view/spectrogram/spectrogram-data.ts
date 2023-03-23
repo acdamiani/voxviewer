@@ -1,5 +1,5 @@
-import type { InitOutput } from 'rs';
-import JsSpectrogram, { type SpectrogramOptions } from './spectrogram';
+import JsSpectrogram from './spectrogram';
+import type { SpectrogramOptions } from './glue';
 
 export default class SpectrogramData {
   readonly channels: number;
@@ -19,7 +19,6 @@ export default class SpectrogramData {
   }
 
   static async createFromAudioBuffer(
-    initResult: InitOutput,
     buffer: AudioBuffer,
     {
       webWorker = true,
@@ -33,7 +32,7 @@ export default class SpectrogramData {
       buffer.copyFromChannel(sample, i);
       const output = webWorker
         ? await JsSpectrogram.generateWithWorker(sample, options)
-        : JsSpectrogram.generate(initResult.memory.buffer, sample, options);
+        : JsSpectrogram.generate(sample, options);
 
       data = data ?? new SpectrogramData(buffer.numberOfChannels);
       data._insertSpectrogram(output);

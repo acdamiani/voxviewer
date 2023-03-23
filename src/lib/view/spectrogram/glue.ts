@@ -34,9 +34,3 @@ export type SpectrogramOptions = {
   range?: number;
   colorscheme?: Colorscheme;
 };
-
-export const document = {
-  querySelectorAll() {
-    return [];
-  },
-};

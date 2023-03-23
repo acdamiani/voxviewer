@@ -21,10 +21,12 @@ export default class SpectrogramRenderer {
 
     const spectrogram = data.spectrogram(channel);
 
-    const windows = await spectrogram.windows;
-    const bins = await spectrogram.bins;
-    const buffer = await spectrogram.buffer;
+    const windows = spectrogram.windows;
+    const bins = spectrogram.bins;
+    const buffer = spectrogram.buffer;
     const info = spectrogram.info;
+
+    console.log(windows, bins, buffer);
 
     const windowsInView = Math.floor(
       (ctx.canvas.width * samplesPerPixel * 2) / info.windowSize,

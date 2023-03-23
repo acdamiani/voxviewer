@@ -8,20 +8,12 @@ import init, { WasmSampleBuffer, Spectrogram, type InitOutput } from 'rs';
 import wasmUrl from 'rs/rs_bg.wasm?url';
 import { colorschemeMap, windowMap, type SpectrogramOptions } from './glue';
 
-declare const self: DedicatedWorkerGlobalScope & {
-  spectrogram: Spectrogram | null;
-  initResult: InitOutput | null;
-  document: { baseURI: string };
-};
+declare const self: DedicatedWorkerGlobalScope;
 
 type SpectrogramMessage = {
-  type: 'gen' | 'ptr' | 'bins' | 'windows' | 'memory';
-  samples: Float32Array | null;
-  options: Required<SpectrogramOptions> | null;
+  samples: Float32Array;
+  options: Required<SpectrogramOptions>;
 };
-
-self.spectrogram = null;
-self.initResult = null;
 
 self.onmessage = (e) => {
   const data = e.data as SpectrogramMessage;
@@ -30,87 +22,34 @@ self.onmessage = (e) => {
     return;
   }
 
-  const { type, samples, options } = data;
+  const { samples, options } = data;
 
-  switch (type) {
-    case 'gen':
-      if (!samples) {
-        throw new Error(
-          "A sample buffer should be provided when message of type 'gen' is sent",
-        );
-      } else if (!options) {
-        throw new Error(
-          "A options message property should be provided when message of type 'gen' is sent",
-        );
-      }
+  init(wasmUrl).then((output) => {
+    const spectrogram = new Spectrogram(
+      options.windowSize,
+      options.zeroPaddingFactor,
+      windowMap[options.windowFunction],
+      options.offset,
+      options.range,
+      colorschemeMap[options.colorscheme],
+    );
 
-      self.spectrogram?.free();
+    spectrogram.initialize(new WasmSampleBuffer(samples));
 
-      init(wasmUrl).then((o) => {
-        self.initResult = o;
-        self.spectrogram = new Spectrogram(
-          options.windowSize,
-          options.zeroPaddingFactor,
-          windowMap[options.windowFunction],
-          options.offset,
-          options.range,
-          colorschemeMap[options.colorscheme],
-        );
+    const bins = spectrogram.bins();
+    const windows = spectrogram.windows();
 
-        self.spectrogram.initialize(new WasmSampleBuffer(samples));
-        self.spectrogram.compute();
+    const arr = new Uint8Array(bins * windows * 3);
 
-        self.postMessage({
-          type: 'success',
-        });
-      });
+    spectrogram.compute(arr);
 
-      break;
-    case 'ptr':
-      if (!self.spectrogram) {
-        throw new Error("A 'ptr' message must be preceded by a 'gen' message");
-      }
-
-      self.postMessage({
-        type: 'result',
-        result: self.spectrogram.data_ptr(),
-      });
-
-      break;
-    case 'windows':
-      if (!self.spectrogram) {
-        throw new Error(
-          "A 'windows' message must be preceded by a 'gen' message",
-        );
-      }
-
-      self.postMessage({
-        type: 'result',
-        result: self.spectrogram.windows(),
-      });
-
-      break;
-    case 'bins':
-      if (!self.spectrogram) {
-        throw new Error("A 'bins' message must be preceded by a 'gen' message");
-      }
-
-      self.postMessage({
-        type: 'result',
-        result: self.spectrogram.bins(),
-      });
-
-      break;
-    case 'memory':
-      if (!self.initResult) {
-        throw new Error(
-          "A 'memory' message must be preceded by a 'gen' message",
-        );
-      }
-
-      self.postMessage({
-        type: 'result',
-        result: self.initResult.memory.buffer,
-      });
-  }
+    self.postMessage(
+      {
+        bins: bins,
+        windows: windows,
+        buffer: arr,
+      },
+      [arr.buffer],
+    );
+  });
 };

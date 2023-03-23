@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { buffer, initResult, zoom } from '$lib/stores';
-  import { get } from 'svelte/store';
+  import { buffer, zoom } from '$lib/stores';
   import { getContext, onMount } from 'svelte';
   import SpectrogramRenderer from './spectrogram-renderer';
   import SpectrogramData from './spectrogram-data';
@@ -40,13 +39,8 @@
       return;
     }
 
-    const result = get(initResult);
-
-    if (!result) {
-      throw new Error('Wasm instance was not initialized');
-    }
-
-    SpectrogramData.createFromAudioBuffer(result, b, {
+    SpectrogramData.createFromAudioBuffer(b, {
+      webWorker: false,
       windowSize: 2048,
     })
       .then((spectrogramData) => {
