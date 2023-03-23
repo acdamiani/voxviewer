@@ -1,5 +1,5 @@
-import { WAVEFORM_BASE_SAMPLES_PER_PIXEL, ZOOM_FAC } from '$lib/util/constants';
-import WaveformData from 'waveform-data';
+import { ZOOM_FAC } from '$lib/util/constants';
+import type WaveformData from 'waveform-data';
 
 export default class WaveformRenderer {
   readonly canvas: HTMLCanvasElement;

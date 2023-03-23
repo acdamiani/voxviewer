@@ -24,7 +24,7 @@ self.onmessage = (e) => {
 
   const { samples, options } = data;
 
-  init(wasmUrl).then((output) => {
+  init(wasmUrl).then(() => {
     const spectrogram = new Spectrogram(
       options.windowSize,
       options.zeroPaddingFactor,

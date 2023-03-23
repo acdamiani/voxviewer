@@ -2,7 +2,6 @@
   import Ticker, { type TickerConfig } from './ticker';
   import { zoom, pan, buffer } from '$lib/stores';
   import { subscribe } from 'svelte/internal';
-  import type { WasmAudioBuffer } from '$lib/audio/audio';
 
   let w: number;
   let h: number;
@@ -20,7 +19,7 @@
   });
 
   let sampleRate: number;
-  subscribe(buffer, (buffer: WasmAudioBuffer) => {
+  subscribe(buffer, (buffer: AudioBuffer) => {
     sampleRate = buffer?.sampleRate;
   });
 
@@ -43,10 +42,8 @@
     canvas.width = w;
     canvas.height = h;
   }
-</script>
 
-<svelte:window
-  on:keydown|preventDefault|stopPropagation={(e) => {
+  const keydown = (e: KeyboardEvent) => {
     const now = Date.now();
 
     if (e.ctrlKey) {
@@ -63,8 +60,9 @@
           break;
       }
     }
-  }}
-  on:wheel|nonpassive|preventDefault|stopPropagation={(e) => {
+  };
+
+  const wheel = (e: WheelEvent) => {
     const now = Date.now();
 
     if (e.ctrlKey) {
@@ -86,7 +84,12 @@
     } else {
       pan.update((p) => p + e.deltaY);
     }
-  }}
+  };
+</script>
+
+<svelte:window
+  on:keydown|preventDefault|stopPropagation={keydown}
+  on:wheel|nonpassive|preventDefault|stopPropagation={wheel}
 />
 
 <div class="relative w-full h-full" bind:clientWidth={w} bind:clientHeight={h}>
