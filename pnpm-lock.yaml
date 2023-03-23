@@ -11,7 +11,7 @@ specifiers:
   autoprefixer: 10.4.13
   decimal.js: 10.4.3
   eslint: 8.28.0
-  eslint-config-prettier: 8.5.0
+  eslint-config-prettier: 8.8.0
   eslint-plugin-svelte3: 4.0.0
   postcss: 8.4.21
   prettier: 2.8.0
@@ -42,7 +42,7 @@ devDependencies:
   '@typescript-eslint/parser': 5.56.0_pku7h6lsbnh7tcsfjudlqd5qce
   autoprefixer: 10.4.13_postcss@8.4.21
   eslint: 8.28.0
-  eslint-config-prettier: 8.5.0_eslint@8.28.0
+  eslint-config-prettier: 8.8.0_eslint@8.28.0
   eslint-plugin-svelte3: 4.0.0_6mun4zwmp3itiqdtiz44rfa7k4
   postcss: 8.4.21
   prettier: 2.8.0
@@ -928,8 +928,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /eslint-config-prettier/8.5.0_eslint@8.28.0:
-    resolution: {integrity: sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==}
+  /eslint-config-prettier/8.8.0_eslint@8.28.0:
+    resolution: {integrity: sha512-wLbQiFre3tdGgpDv67NQKnJuTlcUVYHas3k+DZCc2U2BadthoEY4B7hLPvAxaqdyOGCzuLfii2fqGph10va7oA==}
     hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
