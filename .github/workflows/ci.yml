@@ -6,8 +6,8 @@ on:
 name: CI Jobs
 
 jobs:
-  check:
-    name: Check
+  check-rust:
+    name: Check Rust
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -36,53 +36,18 @@ jobs:
       - name: Check linting
         run: pnpm lint
 
-  test-node:
-    name: Test Suite (Node.js)
+  check-svelte:
+    name: Check Svelte
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js 16.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
+      - name: Install dependencies
+        run: pnpm install
 
-      - name: Setup Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          override: true
+      - name: Run svelte check
+        run: pnpm check
 
-      - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-
-      - name: Run tests
-        working-directory: ./rs
-        run: wasm-pack test --node
-
-  test-browser:
-    name: Test Suite (Browser)
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          override: true
-
-      - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-
-      - name: Test GeckoDriver
-        working-directory: ./rs
-        run: wasm-pack test --firefox --headless -- --features browser_test
-
-      - name: Test ChromeDriver
-        working-directory: ./rs
-        run: wasm-pack test --chrome --headless -- --features browser_test
+      - name: Check linting
+        run: pnpm lint
