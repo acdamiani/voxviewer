@@ -14,7 +14,7 @@
 
   <!--Waveform-->
   <ViewFrame title="waveform">
-    <Waveform />
+    <!-- <Waveform /> -->
   </ViewFrame>
 
   <!--Spectrogram-->

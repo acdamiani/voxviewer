@@ -38,8 +38,9 @@ impl SpectrogramComputationConfig {
         let padding = ((spectrogram.win_size * (spectrogram.zero_pad_fac - 1)) / 2) as usize;
 
         let bins = (fft_len / 2) as usize;
-        let samples = buffer_len + buffer_len % (win_size / 2);
-        let windows = samples / win_size * 2 - 1;
+        let div = (win_size / 2) - 1;
+        let samples = buffer_len + div & !div;
+        let windows = samples / win_size * 2;
 
         let fft = spectrogram.planner.plan_fft_forward(fft_len);
 
@@ -144,10 +145,9 @@ impl Spectrogram {
         // TODO: use Uint8Array directly
         let mut vec: Vec<u8> = Vec::with_capacity(config.windows * config.bins * 3);
 
-        let byte = 0;
-
         let mut sample: f32;
         let mut scratch: Option<&[f32]>;
+
         for i in 0..config.samples {
             sample = *config.buffer.get(i).unwrap_or(&0.0);
             scratch = config.consumer.consume(sample);

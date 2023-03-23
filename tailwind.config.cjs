@@ -9,6 +9,22 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
       },
+
+      keyframes: {
+        scale: {
+          '0%, 100%': { transform: 'scale(0)', opacity: '0' },
+          '50%': { transform: 'scale(1)', opacity: '1' },
+        },
+        spurt: {
+          '0%, 100%': { transform: 'scaleY(0.15)' },
+          '50%': { transform: 'scaleY(1)' },
+        },
+      },
+
+      animation: {
+        scale: 'scale 2s cubic-bezier(0.87, 0, 0.13, 1) infinite forwards',
+        spurt: 'spurt 2s cubic-bezier(0.25, 1, 0.5, 1) infinite forwards',
+      },
     },
   },
   plugins: [

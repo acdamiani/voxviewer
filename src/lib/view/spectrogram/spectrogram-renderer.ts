@@ -26,8 +26,6 @@ export default class SpectrogramRenderer {
     const buffer = spectrogram.buffer;
     const info = spectrogram.info;
 
-    console.log(windows, bins, buffer);
-
     const windowsInView = Math.floor(
       (ctx.canvas.width * samplesPerPixel * 2) / info.windowSize,
     );

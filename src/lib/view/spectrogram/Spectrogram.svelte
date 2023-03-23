@@ -3,6 +3,7 @@
   import { getContext, onMount } from 'svelte';
   import SpectrogramRenderer from './spectrogram-renderer';
   import SpectrogramData from './spectrogram-data';
+  import SpectrogramLoader from '$lib/loaders/SpectrogramLoader.svelte';
 
   const {
     getCanvas,
@@ -20,6 +21,8 @@
 
   let data: SpectrogramData;
   let renderer: SpectrogramRenderer;
+
+  let loading = false;
 
   let zoomValue: number;
   zoom.subscribe((zoom) => {
@@ -39,6 +42,8 @@
       return;
     }
 
+    loading = true;
+
     SpectrogramData.createFromAudioBuffer(b, {
       webWorker: false,
       windowSize: 2048,
@@ -48,6 +53,10 @@
       })
       .catch((e: Error) => {
         setError(e);
+      })
+      .finally(() => {
+        loading = false;
+        console.log(b);
       });
 
     setError(null);
@@ -59,3 +68,9 @@
 </script>
 
 <div class="flex-none basis-16" />
+
+{#if loading}
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <SpectrogramLoader />
+  </div>
+{/if}

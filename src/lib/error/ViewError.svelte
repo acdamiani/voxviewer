@@ -2,6 +2,8 @@
   import IconAlert from '~icons/octicon/alert-fill-24';
 
   export let error: Error;
+
+  $: console.error(error);
 </script>
 
 <div

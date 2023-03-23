@@ -3,8 +3,6 @@ import WaveformData from 'waveform-data';
 
 export default class WaveformRenderer {
   readonly canvas: HTMLCanvasElement;
-
-  private _waveform: Promise<WaveformData> | null = null;
   private _lastZoom = 0;
 
   constructor(canvas: HTMLCanvasElement) {
@@ -19,7 +17,6 @@ export default class WaveformRenderer {
   }
 
   private _draw(data: WaveformData, offset: number, cache: boolean) {
-    // return;
     const ctx = this.canvas.getContext('2d');
 
     if (!ctx) {
@@ -58,30 +55,11 @@ export default class WaveformRenderer {
     // }
   }
 
-  async render(buffer: AudioBuffer, zoom: number, pan: number) {
-    const options = {
-      audio_buffer: buffer,
-      scale: WAVEFORM_BASE_SAMPLES_PER_PIXEL,
-    };
-
-    if (this._waveform === null) {
-      this._waveform = new Promise<WaveformData>((resolve, reject) => {
-        WaveformData.createFromAudio(options, (err, waveform) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(waveform);
-          }
-        });
-      });
-    }
-
-    return this._waveform.then((waveform) => {
-      const resampled = waveform.resample({
-        scale: waveform.scale + ZOOM_FAC * (zoom ** 2 - 1),
-      });
-      this._draw(resampled, Math.round(pan), zoom !== this._lastZoom);
-      this._lastZoom = zoom;
+  async render(waveform: WaveformData, zoom: number, pan: number) {
+    const resampled = waveform.resample({
+      scale: waveform.scale + ZOOM_FAC * (zoom ** 2 - 1),
     });
+    this._draw(resampled, Math.round(pan), zoom !== this._lastZoom);
+    this._lastZoom = zoom;
   }
 }
