@@ -27,6 +27,15 @@ jobs:
           # Can't set working-directory for some reason https://github.com/actions-rs/cargo/issues/86
           args: --manifest-path ./rs/Cargo.toml
 
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run svelte check
+        run: pnpm check
+
+      - name: Check linting
+        run: pnpm lint
+
   test-node:
     name: Test Suite (Node.js)
     runs-on: ubuntu-latest
