@@ -24,4 +24,4 @@ wasm-pack build --target web
 tmp=$(mktemp)
 
 cd pkg
-jq '. += { type: "module" }' package.json > "$tmp" && mv "$tmp" package.json
+jq ". += { type: \"module\" }" package.json > "$tmp" && mv "$tmp" package.json
