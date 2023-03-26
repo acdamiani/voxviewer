@@ -3,6 +3,8 @@
   import IconChevronDown from '~icons/octicon/chevron-down';
 
   const label = shortid.generate();
+
+  export let value: string | undefined = undefined;
 </script>
 
 <div class="flex w-full items-center justify-between">
@@ -11,8 +13,9 @@
   </label>
   <div class="flex-1 relative max-w-[12rem]">
     <select
-      class="w-full outline-none cursor-pointer p-1 pr-6 appearance-none bg-zinc-900 border-2 border-zinc-800 hover:border-zinc-700 rounded-md ring-2 ring-transparent focus-visible:ring-teal-500"
+      class="w-full outline-none cursor-pointer p-2 pr-6 appearance-none bg-neutral-800 rounded-md ring-2 ring-transparent focus-visible:ring-teal-500 shadow-highlight transition-colors text-white"
       id={label}
+      bind:value
     >
       <slot />
     </select>

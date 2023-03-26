@@ -1,6 +1,5 @@
 import type AudioFile from '$lib/audio/audio';
 import { writable, derived, type Readable } from 'svelte/store';
-import { initResult } from './wasm';
 
 const audioStore = () => {
   const audio = writable<AudioFile | null>(null);
@@ -11,14 +10,9 @@ const audioStore = () => {
 
   const subscribe = audio.subscribe;
 
-  const buffer: Readable<AudioBuffer> = derived(
-    [audio, initResult],
-    ([$audio, $initResult], set) => {
-      if ($initResult) {
-        $audio?.load().then((b) => set(b));
-      }
-    },
-  );
+  const buffer: Readable<AudioBuffer> = derived([audio], ([$audio], set) => {
+    $audio?.load().then((b) => set(b));
+  });
 
   return { audio: { set, subscribe }, buffer };
 };

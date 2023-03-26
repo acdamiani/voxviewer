@@ -12,6 +12,11 @@ export const windowMap = {
 } as const;
 
 export type WindowFunction = keyof typeof windowMap;
+export type WindowFunctionKinds =
+  | Exclude<WindowFunction, 'gaussian-2.5' | 'gaussian-3.5' | 'gaussian-4.5'>
+  | 'gaussian';
+
+export type GaussianAlphas = '2.5' | '3.5' | '4.5';
 
 export const colorschemeMap = {
   blackWhite: 0, // Colorscheme.BlackWhite
@@ -27,10 +32,23 @@ export const colorschemeMap = {
 export type Colorscheme = keyof typeof colorschemeMap;
 
 export type SpectrogramOptions = {
-  windowSize: number;
+  windowSize?: number;
   zeroPaddingFactor?: number;
   windowFunction?: WindowFunction;
   offset?: number;
   range?: number;
   colorscheme?: Colorscheme;
 };
+
+export function defaultOptions(
+  options: SpectrogramOptions,
+): Required<SpectrogramOptions> {
+  return {
+    windowSize: options.windowSize ?? 1024,
+    zeroPaddingFactor: options.zeroPaddingFactor ?? 1,
+    windowFunction: options.windowFunction ?? 'hann',
+    offset: options.offset ?? 20,
+    range: options.range ?? 80,
+    colorscheme: options.colorscheme ?? 'magma',
+  };
+}

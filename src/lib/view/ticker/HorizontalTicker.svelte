@@ -53,9 +53,11 @@
 
       switch (e.key) {
         case '=':
+          e.preventDefault();
           zoom.zoomIn();
           break;
         case '-':
+          e.preventDefault();
           zoom.zoomOut();
           break;
       }
@@ -88,7 +90,7 @@
 </script>
 
 <svelte:window
-  on:keydown|preventDefault|stopPropagation={keydown}
+  on:keydown|stopPropagation={keydown}
   on:wheel|nonpassive|preventDefault|stopPropagation={wheel}
 />
 

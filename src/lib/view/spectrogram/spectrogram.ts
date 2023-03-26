@@ -1,19 +1,11 @@
 import { Spectrogram, WasmSampleBuffer } from 'rs';
 import SpectrogramWorker from './spectrogram-worker?worker';
-import { type SpectrogramOptions, windowMap, colorschemeMap } from './glue';
-
-function defaultOptions(
-  options: SpectrogramOptions,
-): Required<SpectrogramOptions> {
-  return {
-    windowSize: options.windowSize,
-    zeroPaddingFactor: options.zeroPaddingFactor ?? 1,
-    windowFunction: options.windowFunction ?? 'hann',
-    offset: options.offset ?? 20,
-    range: options.range ?? 80,
-    colorscheme: options.colorscheme ?? 'magma',
-  };
-}
+import {
+  type SpectrogramOptions,
+  windowMap,
+  colorschemeMap,
+  defaultOptions,
+} from './glue';
 
 export default class JsSpectrogram {
   readonly buffer: Uint8Array;
