@@ -8,6 +8,8 @@
   import Select from '$lib/controls/Select.svelte';
   import SwitchButton from '$lib/controls/SwitchButton/SwitchButton.svelte';
   import SwitchButtonIcon from '$lib/controls/SwitchButton/SwitchButtonIcon.svelte';
+  import SwitchButtonText from '$lib/controls/SwitchButton/SwitchButtonText.svelte';
+  import type { GaussianAlphas, WindowFunctionKinds } from './spectrogram/glue';
 
   import IconRectangular from '~icons/window-functions/rectangular';
   import IconHamming from '~icons/window-functions/hamming';
@@ -17,8 +19,8 @@
   import IconBlackman from '~icons/window-functions/blackman';
   import IconBlackmanHarris from '~icons/window-functions/blackman-harris';
   import IconGaussian from '~icons/window-functions/gaussian';
-  import SwitchButtonText from '$lib/controls/SwitchButton/SwitchButtonText.svelte';
-  import type { GaussianAlphas, WindowFunctionKinds } from './spectrogram/glue';
+  import IconWelchOverlap from '~icons/window-functions/welch-overlap';
+  import IconBartlettOverlap from '~icons/window-functions/bartlett-overlap';
 
   import ColorschemeSwitcher from '$lib/controls/ColorschemeSwitcher/ColorschemeSwitcher.svelte';
   import Colorscheme from '$lib/controls/ColorschemeSwitcher/Colorscheme.svelte';
@@ -42,6 +44,7 @@
 
   let windowFunction: WindowFunctionKinds = 'hann';
   let gaussianAlpha: GaussianAlphas = '2.5';
+  let overlapMethod: 'welch' | 'bartlett' = 'welch';
   let windowSize = '1024';
   let zeroPaddingFactor = '1';
 
@@ -58,7 +61,7 @@
 </script>
 
 <div
-  class="flex-none basis-96 max-w-[24rem] border-r-2 border-zinc-800 flex flex-col p-4 gap-3"
+  class="flex-none basis-[22rem] max-w-[22rem] border-r-2 border-zinc-800 flex flex-col p-4 gap-3"
 >
   <h2 class="font-bold text-lg">Settings</h2>
   <FileInput readFileResult={(f) => (file = f)} accept="audio/*" />
@@ -108,6 +111,18 @@
     </SwitchButton>
   {/if}
 
+  <SwitchButton rows={1} bind:value={overlapMethod}>
+    <span slot="title">Overlap Method</span>
+    <SwitchButtonIcon value="welch">
+      <IconWelchOverlap />
+      <span slot="name">Welch</span>
+    </SwitchButtonIcon>
+    <SwitchButtonIcon value="bartlett">
+      <IconBartlettOverlap />
+      <span slot="name">Bartlett</span></SwitchButtonIcon
+    >
+  </SwitchButton>
+
   <Select bind:value={windowSize}>
     <span slot="label">Window size</span>
     <option value="128">128</option>
@@ -140,9 +155,5 @@
     <Colorscheme url="/ramps/cool.png" />
     <Colorscheme url="/ramps/gray.png" />
   </ColorschemeSwitcher>
-
-  <Checkbox defaultChecked={true}>
-    <span slot="label">Welch Overlap</span>
-  </Checkbox>
   <Button disabled={!file} on:click={loadFile}>Load</Button>
 </div>
