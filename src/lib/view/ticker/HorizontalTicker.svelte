@@ -83,6 +83,8 @@
       }
 
       sd = now;
+
+      e.preventDefault();
     } else {
       pan.update((p) => p + e.deltaY);
     }
@@ -91,7 +93,7 @@
 
 <svelte:window
   on:keydown|stopPropagation={keydown}
-  on:wheel|nonpassive|preventDefault|stopPropagation={wheel}
+  on:wheel|nonpassive|stopPropagation={wheel}
 />
 
 <div class="relative w-full h-full" bind:clientWidth={w} bind:clientHeight={h}>

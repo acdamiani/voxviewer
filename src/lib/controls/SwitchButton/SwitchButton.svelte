@@ -4,6 +4,8 @@
 
   export let value: string | undefined = undefined;
   export let rows = 3;
+  export let background = true;
+  export let gap: 'none' | 'gap' = 'none';
 
   let selectedOption = writable<string | undefined>(value);
 
@@ -16,20 +18,18 @@
   selectedOption.subscribe((v) => {
     value = v;
   });
+
+  const backgroundStyle = background
+    ? 'bg-black bg-opacity-30 rounded-lg p-2'
+    : '';
+  const gapStyle = gap === 'none' ? 'gap-0' : 'gap-2';
 </script>
 
-<div class="flex flex-col gap-2">
-  <span
-    class="font-semibold uppercase tracking-widest text-xs text-neutral-500"
-  >
-    <slot name="title" />
-  </span>
-  <div
-    class="grid grid-flow-col auto-cols-fr gap-1 bg-black bg-opacity-30 rounded-lg p-2"
-    style="grid-template-rows: repeat({rows}, minmax(0, 1fr));"
-    role="grid"
-    aria-multiselectable="true"
-  >
-    <slot />
-  </div>
+<div
+  class="grid grid-flow-col auto-cols-fr {gapStyle} {backgroundStyle}"
+  style="grid-template-rows: repeat({rows}, minmax(0, 1fr));"
+  role="grid"
+  aria-multiselectable="true"
+>
+  <slot />
 </div>

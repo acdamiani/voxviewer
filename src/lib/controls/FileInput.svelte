@@ -17,9 +17,9 @@
 </script>
 
 <button
-  class="rounded-lg outline-none appearance-none ring-2 ring-transparent focus-visible:ring-teal-500"
+  class="flex-shrink-0 rounded-lg outline-none appearance-none ring-2 ring-transparent focus-visible:ring-teal-500"
 >
-  <label class="flex group outline-none rounded-lg h-8">
+  <label class="flex group outline-none rounded-lg">
     <input
       type="file"
       class="hidden"
@@ -29,13 +29,13 @@
       {id}
     />
     <div
-      class="p-1 bg-slate-900 group-hover:bg-slate-700 text-white font-semibold h-8 px-3 rounded-l-lg flex items-center justify-center w-auto dark:bg-teal-500 dark:group-hover:bg-teal-400 outline-none fill-current gap-1 text-sm cursor-pointer"
+      class="p-1 text-white font-semibold h-8 px-3 rounded-l-lg flex items-center justify-center bg-teal-500 group-hover:bg-teal-400 outline-none fill-current gap-1 text-sm cursor-pointer whitespace-nowrap"
     >
       <IconUpload />
-      Upload
+      Pick File
     </div>
     <div
-      class="w-full bg-transparent border-2 border-l-0 border-zinc-800 group-hover:border-zinc-700 rounded-r-lg outline-none dark:text-white px-2 h-8 whitespace-nowrap overflow-x-auto flex items-center cursor-pointer"
+      class="w-full bg-transparent border-2 border-l-0 border-zinc-800 group-hover:border-zinc-700 rounded-r-lg outline-none text-white px-2 h-8 whitespace-nowrap overflow-x-auto flex items-center cursor-pointer scrollbar-hide"
     >
       {#if files?.[0]}
         {files[0].name}

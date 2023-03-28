@@ -30,9 +30,9 @@ export default class SpectrogramData {
 
     for (let i = 0; i < buffer.numberOfChannels; i++) {
       buffer.copyFromChannel(sample, i);
-      const output = webWorker
-        ? await JsSpectrogram.generateWithWorker(sample, options)
-        : JsSpectrogram.generate(sample, options);
+      const output = await (webWorker
+        ? JsSpectrogram.generateWithWorker(sample, options)
+        : JsSpectrogram.generate(sample, options));
 
       data = data ?? new SpectrogramData(buffer.numberOfChannels);
       data._insertSpectrogram(output);

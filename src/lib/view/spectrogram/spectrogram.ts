@@ -1,4 +1,4 @@
-import { Spectrogram, WasmSampleBuffer } from 'rs';
+import init, { Spectrogram, WasmSampleBuffer } from 'rs';
 import SpectrogramWorker from './spectrogram-worker?worker';
 import {
   type SpectrogramOptions,
@@ -56,30 +56,32 @@ export default class JsSpectrogram {
     });
   }
 
-  static generate(
+  static async generate(
     samples: Float32Array,
     options: SpectrogramOptions,
-  ): JsSpectrogram {
-    const inputOptions = defaultOptions(options);
+  ): Promise<JsSpectrogram> {
+    return init().then(() => {
+      const inputOptions = defaultOptions(options);
 
-    const spectrogram = new Spectrogram(
-      inputOptions.windowSize,
-      inputOptions.zeroPaddingFactor,
-      windowMap[inputOptions.windowFunction],
-      inputOptions.offset,
-      inputOptions.range,
-      colorschemeMap[inputOptions.colorscheme],
-    );
+      const spectrogram = new Spectrogram(
+        inputOptions.windowSize,
+        inputOptions.zeroPaddingFactor,
+        windowMap[inputOptions.windowFunction],
+        inputOptions.offset,
+        inputOptions.range,
+        colorschemeMap[inputOptions.colorscheme],
+      );
 
-    spectrogram.initialize(new WasmSampleBuffer(samples));
+      spectrogram.initialize(new WasmSampleBuffer(samples));
 
-    const bins = spectrogram.bins();
-    const windows = spectrogram.windows();
+      const bins = spectrogram.bins();
+      const windows = spectrogram.windows();
 
-    const arr = new Uint8Array(bins * windows * 3);
+      const arr = new Uint8Array(bins * windows * 3);
 
-    spectrogram.compute(arr);
+      spectrogram.compute(arr);
 
-    return new JsSpectrogram(arr, bins, windows, inputOptions);
+      return new JsSpectrogram(arr, bins, windows, inputOptions);
+    });
   }
 }

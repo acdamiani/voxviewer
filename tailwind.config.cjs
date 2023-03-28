@@ -33,6 +33,7 @@ module.exports = {
     },
   },
   plugins: [
+    require('tailwind-scrollbar-hide'),
     plugin(({ matchUtilities, theme }) => {
       matchUtilities(
         {

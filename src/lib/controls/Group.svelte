@@ -4,7 +4,6 @@
   >
     <slot name="title" />
   </span>
-  <div class="grid grid-cols-4 grid-rows-2 aspect-[16/5]">
-    <slot />
-  </div>
+
+  <slot />
 </div>

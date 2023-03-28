@@ -1,0 +1,77 @@
+<script lang="ts">
+  import { createEventDispatcher } from 'svelte';
+
+  export let name = '';
+  export let value = 0;
+  export let min = 0;
+  export let max = 10;
+  export let step = 1;
+
+  export let minLabel: string | undefined = undefined;
+  export let maxLabel: string | undefined = undefined;
+
+  let track: HTMLSpanElement;
+  let left: number;
+  let range: number;
+
+  let dragging = false;
+
+  const dispatcher = createEventDispatcher();
+
+  $: left = (value - min) / range;
+  $: range = max - min;
+  $: value = Math.max(min, Math.min(max, value));
+  $: dispatcher('change', value);
+
+  const click = (e: MouseEvent) => {
+    dragging = true;
+    change(e);
+    dragging = false;
+  };
+
+  const change = (e: MouseEvent) => {
+    if (!dragging) {
+      return;
+    }
+
+    const { left, width } = track.getBoundingClientRect();
+    const offset = e.clientX - left;
+
+    let next = min + Math.round((range * offset) / width / step) * step;
+    next = Math.max(min, Math.min(max, next));
+
+    value = next;
+  };
+</script>
+
+<svelte:window on:mouseup={() => (dragging = false)} on:mousemove={change} />
+
+<div class="flex gap-4 items-center">
+  <span class="text-sm text-neutral-400">
+    {minLabel ?? min}
+  </span>
+  <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+  <span
+    class="cursor-pointer relative inline-block box-content h-1 py-4 w-full"
+    on:mousedown={() => (dragging = true)}
+    on:click={click}
+  >
+    <span
+      class="block h-1 rounded-lg bg-black bg-opacity-30 w-full"
+      bind:this={track}
+    />
+    <span
+      class="absolute left-0 top-1/2 block h-1 rounded-lg bg-white bg-opacity-40 w-full origin-left -translate-y-1/2"
+      style="width: {left * 100}%;"
+    />
+    <span
+      class="absolute left-0 top-1/2 block h-6 w-3 rounded-lg bg-neutral-700 -translate-y-1/2 -translate-x-1/2 shadow-highlight"
+      style="left: {left * 100}%;"
+    >
+      <input type="hidden" {min} {max} {step} {value} {name} />
+    </span>
+  </span>
+  <span class="text-sm text-neutral-400">
+    {maxLabel ?? max}
+  </span>
+</div>

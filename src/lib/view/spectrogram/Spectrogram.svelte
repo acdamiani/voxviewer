@@ -45,7 +45,8 @@
     loading = true;
 
     SpectrogramData.createFromAudioBuffer(b, {
-      webWorker: false,
+      // FF doesn't support module web workers in Vite dev :(
+      webWorker: import.meta.env.PROD,
       windowSize: 2048,
     })
       .then((spectrogramData) => {

@@ -93,6 +93,8 @@ impl Spectrogram {
         range: f32,
         colorscheme: Colorscheme,
     ) -> Result<Spectrogram, JsError> {
+        crate::utils::set_panic_hook();
+
         if !win_size.is_power_of_two() {
             return Err(JsError::new("win_size should be a power of two"));
         } else if !zero_pad_fac.is_power_of_two() {
