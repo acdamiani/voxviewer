@@ -4,6 +4,7 @@
   import SpectrogramRenderer from './spectrogram-renderer';
   import SpectrogramData from './spectrogram-data';
   import SpectrogramLoader from '$lib/loaders/SpectrogramLoader.svelte';
+  import { getWorkerSupport, type WorkerSupport } from '$lib/util/support';
 
   const {
     getCanvas,
@@ -29,6 +30,11 @@
     zoomValue = zoom;
   });
 
+  let workerSupport: WorkerSupport;
+  onMount(() => {
+    workerSupport = getWorkerSupport();
+  });
+
   $: if (data) {
     try {
       renderer.render(data, 0, zoomValue);
@@ -45,8 +51,9 @@
     loading = true;
 
     SpectrogramData.createFromAudioBuffer(b, {
-      // FF doesn't support module web workers in Vite dev :(
-      webWorker: import.meta.env.PROD,
+      webWorker:
+        (import.meta.env.PROD && workerSupport > 0) ||
+        (import.meta.env.DEV && workerSupport > 1),
       windowSize: 2048,
     })
       .then((spectrogramData) => {
