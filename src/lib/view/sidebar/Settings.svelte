@@ -8,19 +8,20 @@
   import Group from '$lib/controls/Group.svelte';
   import SwitchButton from '$lib/controls/SwitchButton/SwitchButton.svelte';
   import SwitchButtonIcon from '$lib/controls/SwitchButton/Icon/SwitchButtonIcon.svelte';
-
   import ColorschemeSelector from '$lib/settings/ColorschemeSelector.svelte';
+  import WindowFunctionSelector from '$lib/settings/WindowFunctionSelector.svelte';
+
+  import SidebarTab from './SidebarTab.svelte';
 
   import type {
     GaussianAlphas,
     WindowFunctionKinds,
     Colorscheme,
     WindowFunction,
-  } from './spectrogram/glue';
+  } from '$lib/view/spectrogram/glue';
 
   import IconWelchOverlap from '~icons/window-functions/welch-overlap';
   import IconBartlettOverlap from '~icons/window-functions/bartlett-overlap';
-  import WindowFunctionSelector from '$lib/settings/WindowFunctionSelector.svelte';
 
   let file: File | undefined = undefined;
   let audioFile: AudioFile | null = null;
@@ -59,9 +60,7 @@
   }
 </script>
 
-<div
-  class="flex-none basis-[22rem] max-w-[22rem] border-r-2 border-zinc-800 flex flex-col p-4 gap-3 overflow-y-auto"
->
+<SidebarTab>
   <h2 class="font-bold text-lg">Settings</h2>
   <FileInput readFileResult={(f) => (file = f)} accept="audio/*" />
 
@@ -106,4 +105,4 @@
   <ColorschemeSelector bind:colorscheme />
 
   <Button disabled={!file} on:click={loadFile}>Load</Button>
-</div>
+</SidebarTab>

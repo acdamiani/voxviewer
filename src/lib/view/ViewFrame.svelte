@@ -26,7 +26,7 @@
   let error: Error | null = null;
 </script>
 
-<div class="h-full min-h-[16rem] relative border-t-2 border-zinc-800 flex">
+<div class="h-full min-h-[16rem] relative border-t border-neutral-800 flex">
   {#if error}
     <ViewError {error} />
   {:else}
@@ -41,7 +41,7 @@
     <canvas hidden bind:this={offscreenCanvas} />
   </div>
   <div
-    class="absolute top-0 left-8 bg-zinc-800 rounded-b-lg opacity-50 px-4 py-1"
+    class="absolute top-0 left-8 border border-t-0 border-neutral-800 bg-neutral-900 rounded-b-lg px-4 py-1"
   >
     <span class="uppercase text-xs font-semibold tracking-widest leading-none"
       >{title}</span

@@ -6,7 +6,7 @@
 </script>
 
 <button
-  class="w-16 h-16 flex items-center justify-center bg-teal-500 hover:bg-teal-400 text-white rounded-full"
+  class="w-16 h-16 flex items-center justify-center bg-teal-500 hover:bg-teal-400 text-white rounded-full shadow-highlight"
   on:click={() => (paused = !paused)}
 >
   {#if paused}
