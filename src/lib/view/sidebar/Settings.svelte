@@ -60,8 +60,7 @@
   }
 </script>
 
-<SidebarTab>
-  <h2 class="font-bold text-lg">Settings</h2>
+<div class="flex flex-col gap-3">
   <FileInput readFileResult={(f) => (file = f)} accept="audio/*" />
 
   <WindowFunctionSelector bind:windowFunctionKind bind:gaussianAlpha />
@@ -96,8 +95,8 @@
     <Slider
       min={0}
       max={5}
-      minLabel="1"
-      maxLabel="32"
+      minLabel="1x"
+      maxLabel="32x"
       bind:value={zeroPaddingFactor}
     />
   </Group>
@@ -105,4 +104,4 @@
   <ColorschemeSelector bind:colorscheme />
 
   <Button disabled={!file} on:click={loadFile}>Load</Button>
-</SidebarTab>
+</div>
