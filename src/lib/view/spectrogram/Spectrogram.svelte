@@ -50,6 +50,8 @@
 
     loading = true;
 
+    console.log(workerSupport);
+
     SpectrogramData.createFromAudioBuffer(b, {
       webWorker:
         (import.meta.env.PROD && workerSupport > 0) ||

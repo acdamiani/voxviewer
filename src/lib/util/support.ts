@@ -15,10 +15,10 @@ export function getWorkerSupport(): 0 | 1 | 2 {
     try {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      new Worker('blob://', tester);
+      new Worker('data:,', tester).terminate();
     } finally {
       // eslint-disable-next-line no-unsafe-finally
-      return supportsModule ? 1 : 2;
+      return supportsModule ? 2 : 1;
     }
   } else {
     return 0;

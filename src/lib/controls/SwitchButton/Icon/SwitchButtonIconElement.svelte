@@ -17,7 +17,7 @@
   class="w-full rounded-lg transition-colors {selectedStyle} flex flex-col items-center justify-center h-16 gap-1"
 >
   <div
-    class="flex relative rounded-lg border border-zinc-300 border-opacity-30 overflow-hidden px-0.5 pt-1"
+    class="flex relative rounded-lg border border-neutral-300 border-opacity-30 overflow-hidden px-0.5 pt-1"
   >
     <slot />
   </div>

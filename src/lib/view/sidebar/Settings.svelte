@@ -87,6 +87,7 @@
       minLabel="8"
       maxLabel="8192"
       bind:value={windowSize}
+      displayValue={(v) => 2 ** v}
     />
   </Group>
 
@@ -98,6 +99,7 @@
       minLabel="1x"
       maxLabel="32x"
       bind:value={zeroPaddingFactor}
+      displayValue={(v) => `${2 ** v}x`}
     />
   </Group>
 

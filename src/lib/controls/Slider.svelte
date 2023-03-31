@@ -10,6 +10,8 @@
   export let minLabel: string | undefined = undefined;
   export let maxLabel: string | undefined = undefined;
 
+  export let displayValue: (value: number) => any = (v) => v.toString();
+
   let track: HTMLSpanElement;
   let left: number;
   let range: number;
@@ -46,30 +48,34 @@
 
 <svelte:window on:mouseup={() => (dragging = false)} on:mousemove={change} />
 
-<div class="flex gap-4 items-center">
+<div class="flex gap-4 items-center pb-4">
   <span class="text-sm text-neutral-400">
     {minLabel ?? min}
   </span>
   <!-- svelte-ignore a11y-mouse-events-have-key-events -->
   <span
-    class="cursor-pointer relative inline-block box-content h-1 py-4 w-full"
+    class="cursor-pointer relative inline-block box-content h-1 py-6 w-full"
     on:mousedown={() => (dragging = true)}
     on:click={click}
   >
     <span
-      class="block h-1 rounded-lg bg-black bg-opacity-30 w-full"
+      class="block h-1 rounded-lg bg-neutral-950 w-full"
       bind:this={track}
     />
     <span
-      class="absolute left-0 top-1/2 block h-1 rounded-lg bg-white bg-opacity-40 w-full origin-left -translate-y-1/2"
+      class="absolute left-0 top-1/2 block h-1 rounded-lg bg-neutral-600 w-full origin-left -translate-y-1/2"
       style="width: {left * 100}%;"
     />
-    <span
+    <div
       class="absolute left-0 top-1/2 block h-6 w-3 rounded-lg bg-neutral-700 -translate-y-1/2 -translate-x-1/2 shadow-highlight"
       style="left: {left * 100}%;"
     >
       <input type="hidden" {min} {max} {step} {value} {name} />
-    </span>
+      <span
+        class="absolute left-1/2 -bottom-8 -translate-x-1/2 bg-neutral-950 rounded-md px-2 text-neutral-400"
+        >{displayValue(value)}</span
+      >
+    </div>
   </span>
   <span class="text-sm text-neutral-400">
     {maxLabel ?? max}
