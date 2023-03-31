@@ -66,7 +66,6 @@
       })
       .finally(() => {
         loading = false;
-        console.log(b);
       });
 
     setError(null);

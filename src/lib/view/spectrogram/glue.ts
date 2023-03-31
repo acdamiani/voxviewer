@@ -34,6 +34,7 @@ export type Colorscheme = keyof typeof colorschemeMap;
 export type SpectrogramOptions = {
   windowSize?: number;
   zeroPaddingFactor?: number;
+  overlap?: boolean;
   windowFunction?: WindowFunction;
   offset?: number;
   range?: number;
@@ -46,6 +47,7 @@ export function defaultOptions(
   return {
     windowSize: options.windowSize ?? 1024,
     zeroPaddingFactor: options.zeroPaddingFactor ?? 1,
+    overlap: options.overlap ?? true,
     windowFunction: options.windowFunction ?? 'hann',
     offset: options.offset ?? 20,
     range: options.range ?? 80,

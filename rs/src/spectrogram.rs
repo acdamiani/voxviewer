@@ -14,10 +14,11 @@ use crate::{
 struct SpectrogramComputationConfig {
     buffer: Vec<f32>,
 
-    samples: usize,
     windows: usize,
     bins: usize,
     padding: usize,
+
+    hop: usize,
 
     fft: Arc<dyn RealToComplex<f32>>,
 
@@ -25,8 +26,6 @@ struct SpectrogramComputationConfig {
     output: Box<[Complex<f32>]>,
 
     window_data: WindowData,
-
-    consumer: SampleConsumer,
 }
 
 impl SpectrogramComputationConfig {
@@ -37,10 +36,14 @@ impl SpectrogramComputationConfig {
         let fft_len = win_size * spectrogram.zero_pad_fac as usize;
         let padding = ((spectrogram.win_size * (spectrogram.zero_pad_fac - 1)) / 2) as usize;
 
+        let hop = if spectrogram.overlap {
+            win_size / 2
+        } else {
+            win_size
+        };
+
         let bins = (fft_len / 2) as usize;
-        let div = (win_size / 2) - 1;
-        let samples = buffer_len + div & !div;
-        let windows = samples / win_size * 2;
+        let windows = (buffer_len - win_size) / hop + 1;
 
         let fft = spectrogram.planner.plan_fft_forward(fft_len);
 
@@ -53,14 +56,13 @@ impl SpectrogramComputationConfig {
 
         Self {
             fft,
-            samples,
             windows,
             bins,
             padding,
+            hop,
             buffer: buffer.buffer(),
             input: input_slice.into(),
             output: output_slice.into(),
-            consumer: SampleConsumer::new(win_size),
             window_data: WindowData::new(spectrogram.win_func, win_size),
         }
     }
@@ -68,9 +70,10 @@ impl SpectrogramComputationConfig {
 
 #[wasm_bindgen]
 pub struct Spectrogram {
-    win_size: u32,
-    zero_pad_fac: u32,
+    win_size: usize,
+    zero_pad_fac: usize,
     win_func: Window,
+    overlap: bool,
 
     offset: f32,
     range: f32,
@@ -89,6 +92,7 @@ impl Spectrogram {
         win_size: u32,
         zero_pad_fac: u32,
         win_func: Window,
+        overlap: bool,
         offset: f32,
         range: f32,
         colorscheme: Colorscheme,
@@ -103,9 +107,10 @@ impl Spectrogram {
 
         Ok(Self {
             planner: RealFftPlanner::new(),
-            win_size,
-            zero_pad_fac,
+            win_size: win_size as usize,
+            zero_pad_fac: zero_pad_fac as usize,
             win_func,
+            overlap,
             offset,
             range,
             colorscheme,
@@ -147,83 +152,36 @@ impl Spectrogram {
         // TODO: use Uint8Array directly
         let mut vec: Vec<u8> = Vec::with_capacity(config.windows * config.bins * 3);
 
-        let mut sample: f32;
-        let mut scratch: Option<&[f32]>;
+        for i in 0..config.windows {
+            let start = i * config.hop;
+            let frame = &config.buffer[start..(start + self.win_size)];
 
-        for i in 0..config.samples {
-            sample = *config.buffer.get(i).unwrap_or(&0.0);
-            scratch = config.consumer.consume(sample);
+            config.window_data.apply(
+                frame,
+                &mut config.input[config.padding..(config.padding + frame.len())],
+            );
 
-            match scratch {
-                Some(s) => {
-                    config.window_data.apply(
-                        s,
-                        &mut config.input[config.padding..(config.padding + s.len())],
-                    );
-                    config.fft.process(&mut config.input, &mut config.output)?;
-                    vec.extend(
-                        config
-                            .output
-                            .iter()
-                            .take(config.output.len() - 1)
-                            // https://dsp.stackexchange.com/questions/32076/fft-to-spectrum-in-decibel
-                            .map(|x| x.norm() * 2.0 / config.window_data.sum())
-                            .map(|x| 20.0 * (x.log10()))
-                            .map(|x| (x + self.offset) / -self.range)
-                            .map(|x| {
-                                let c = eval_col(self.colorscheme, x as f64);
-                                [c.r, c.g, c.b]
-                            })
-                            .flatten(),
-                    );
-                }
-                None => {}
-            }
+            config.fft.process(&mut config.input, &mut config.output)?;
+
+            vec.extend(
+                config
+                    .output
+                    .iter()
+                    .take(config.output.len() - 1)
+                    // https://dsp.stackexchange.com/questions/32076/fft-to-spectrum-in-decibel
+                    .map(|x| x.norm() * 2.0 / config.window_data.sum())
+                    .map(|x| 20.0 * (x.log10()))
+                    .map(|x| (x + self.offset) / -self.range)
+                    .map(|x| {
+                        let c = eval_col(self.colorscheme, x as f64);
+                        [c.r, c.g, c.b]
+                    })
+                    .flatten(),
+            );
         }
 
         buffer.copy_from(&vec);
 
         Ok(())
-    }
-}
-
-struct SampleConsumer {
-    counter: usize,
-    scratch: Vec<f32>,
-}
-
-impl SampleConsumer {
-    pub fn new(scratch_len: usize) -> Self {
-        Self {
-            counter: 0,
-            scratch: vec![0.0; scratch_len],
-        }
-    }
-
-    pub fn consume(&mut self, sample: f32) -> Option<&[f32]> {
-        let len = self.scratch.len();
-        let mid = len / 2;
-        let cmod = self.counter % mid;
-
-        if self.counter < len {
-            self.scratch[self.counter] = sample;
-            self.counter += 1;
-            return if self.counter % len == 0 {
-                Some(&self.scratch)
-            } else {
-                None
-            };
-        } else if cmod == 0 {
-            self.scratch.rotate_left(mid);
-        }
-
-        self.scratch[cmod + mid] = sample;
-        self.counter += 1;
-
-        if self.counter % mid == 0 {
-            Some(&self.scratch)
-        } else {
-            None
-        }
     }
 }

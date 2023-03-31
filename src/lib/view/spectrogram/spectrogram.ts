@@ -67,6 +67,7 @@ export default class JsSpectrogram {
         inputOptions.windowSize,
         inputOptions.zeroPaddingFactor,
         windowMap[inputOptions.windowFunction],
+        inputOptions.overlap,
         inputOptions.offset,
         inputOptions.range,
         colorschemeMap[inputOptions.colorscheme],

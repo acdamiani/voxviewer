@@ -3,7 +3,7 @@
 // WARNING: Do not move this
 import './worker-url';
 
-import init, { WasmSampleBuffer, Spectrogram, type InitOutput } from 'rs';
+import init, { WasmSampleBuffer, Spectrogram } from 'rs';
 // https://github.com/vitejs/vite/issues/4551#issuecomment-983012078
 import wasmUrl from 'rs/rs_bg.wasm?url';
 import { colorschemeMap, windowMap, type SpectrogramOptions } from './glue';
@@ -29,6 +29,7 @@ self.onmessage = (e) => {
       options.windowSize,
       options.zeroPaddingFactor,
       windowMap[options.windowFunction],
+      options.overlap,
       options.offset,
       options.range,
       colorschemeMap[options.colorscheme],
