@@ -73,8 +73,8 @@ devDependencies:
     specifier: 5.0.2
     version: 5.0.2
   unplugin-icons:
-    specifier: 0.16.0
-    version: 0.16.0
+    specifier: 0.16.1
+    version: 0.16.1
   vite:
     specifier: 4.2.1
     version: 4.2.1
@@ -2194,8 +2194,8 @@ packages:
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /unplugin-icons@0.16.0:
-    resolution: {integrity: sha512-1YDsaMmJDVj9JDffpDrngWvrVtZZeZDHvyDqKEx4O9aQNiS4jRlGC7B14IKy91aHtBZ8/Q3RiF2YrjsyFgGO/A==}
+  /unplugin-icons@0.16.1:
+    resolution: {integrity: sha512-qTunFUkpAyDnwzwV7YV1ZgCWRYfLuURcCurhhXOWMy2ipY88qx1pADvral2hJu4Xymh0X0t3Zcll3BIru2AVLQ==}
     peerDependencies:
       '@svgr/core': '>=7.0.0'
       '@vue/compiler-sfc': ^3.0.2 || ^2.7.0
