@@ -19,11 +19,11 @@
 </script>
 
 <div
-  class="relative flex flex-col min-w-[20rem] rounded-xl bg-neutral-900 overflow-y-auto scrollbar-hide shadow-lg border border-neutral-800 h-full"
+  class="relative flex flex-col w-80 rounded-xl bg-neutral-900 overflow-y-auto scrollbar-hide shadow-lg border border-neutral-800 h-full"
   bind:this={scrollElement}
 >
   <div
-    class="flex items-center sticky top-0 rounded-lg rounded-b-none gap-2 justify-around z-20 p-4 pt-2 bg-neutral-900 border-b transition-colors {borderStyle}"
+    class="flex min-h-[49px] items-center sticky top-0 rounded-lg rounded-b-none gap-2 justify-around z-20 px-4 bg-neutral-900 border-b transition-colors {borderStyle}"
   >
     <SidebarTabButton
       selected={selected === 'settings'}

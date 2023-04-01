@@ -26,7 +26,7 @@
   let error: Error | null = null;
 </script>
 
-<div class="h-full min-h-[16rem] relative border-t border-neutral-800 flex">
+<div class="h-full relative border-t border-neutral-800 flex">
   {#if error}
     <ViewError {error} />
   {:else}

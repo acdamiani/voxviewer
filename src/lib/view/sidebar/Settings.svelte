@@ -11,6 +11,8 @@
   import ColorschemeSelector from '$lib/settings/ColorschemeSelector.svelte';
   import WindowFunctionSelector from '$lib/settings/WindowFunctionSelector.svelte';
 
+  import IconSearch from '~icons/octicon/search-16';
+
   import SidebarTab from './SidebarTab.svelte';
 
   import type {
@@ -105,5 +107,8 @@
 
   <ColorschemeSelector bind:colorscheme />
 
-  <Button disabled={!file} on:click={loadFile}>Load</Button>
+  <Button disabled={!file} on:click={loadFile}>
+    <IconSearch slot="icon" />
+    Analyze</Button
+  >
 </div>

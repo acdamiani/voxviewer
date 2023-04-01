@@ -5,7 +5,7 @@
 </script>
 
 <div class="flex fixed inset-0">
-  <div class="flex flex-col m-4 mr-0 gap-2">
+  <div class="flex m-4 mr-0 gap-1">
     <Navbar />
     <Sidebar />
   </div>

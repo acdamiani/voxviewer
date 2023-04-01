@@ -1,5 +1,7 @@
 <script lang="ts">
-  import IconUpload from '~icons/octicon/upload-16';
+  import IconPlus from '~icons/octicon/plus-24';
+  import IconAudio from '~icons/fa6-solid/headphones';
+  import Button from './Button.svelte';
 
   let files: FileList | null;
 
@@ -16,30 +18,30 @@
   export let id: string | undefined = undefined;
 </script>
 
-<button
-  class="flex-shrink-0 rounded-lg outline-none appearance-none ring-2 ring-transparent focus-visible:ring-teal-500"
->
-  <label class="flex group outline-none rounded-lg">
-    <input
-      type="file"
-      class="hidden"
-      on:change={readFile}
-      bind:files
-      {accept}
-      {id}
-    />
-    <div
-      class="p-1 text-white font-semibold h-8 px-3 rounded-l-lg flex items-center justify-center bg-teal-500 group-hover:bg-teal-400 outline-none fill-current gap-1 text-sm cursor-pointer whitespace-nowrap"
-    >
-      <IconUpload />
-      Pick File
-    </div>
-    <div
-      class="w-full bg-transparent border-2 border-l-0 border-zinc-800 group-hover:border-zinc-700 rounded-r-lg outline-none text-white px-2 h-8 whitespace-nowrap overflow-x-auto flex items-center cursor-pointer scrollbar-hide"
-    >
+<label for={id}>
+  <!-- Test -->
+  <div
+    class="p-3 text-neutral-200 font-bold rounded-lg disabled:opacity-50 flex flex-col gap-2 items-center justify-center bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 text-base transition-colors cursor-pointer w-full"
+  >
+    <span class="text-2xl">
       {#if files?.[0]}
-        {files[0].name}
+        <IconAudio />
+      {:else}
+        <IconPlus />
       {/if}
-    </div>
-  </label>
-</button>
+    </span>
+    {#if files?.[0]}
+      {files[0].name}
+    {:else}
+      Pick File
+    {/if}
+  </div>
+  <input
+    type="file"
+    class="hidden"
+    on:change={readFile}
+    bind:files
+    {accept}
+    {id}
+  />
+</label>
