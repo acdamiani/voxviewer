@@ -1,26 +1,6 @@
 import { writable } from 'svelte/store';
 import type { Updater } from 'svelte/store';
 
-const zoomStore = () => {
-  const { update, subscribe } = writable(1);
-
-  const zoomIn = () => {
-    update((z) => (z <= 1 ? z : z - 1));
-  };
-
-  const zoomOut = () => {
-    update((z) => {
-      return z >= 128 ? z : z + 1;
-    });
-  };
-
-  return {
-    zoomIn,
-    zoomOut,
-    subscribe,
-  };
-};
-
 const panStore = () => {
   const { set: storeSet, update: storeUpdate, subscribe } = writable(0);
 
@@ -43,5 +23,47 @@ const panStore = () => {
   };
 };
 
-export const zoom = zoomStore();
 export const pan = panStore();
+
+const panFromZoom = (pan: number, point: number, lz: number, cz: number) => {
+  const dp = point / cz - point / lz;
+  return pan + dp;
+};
+
+const zoomStore = () => {
+  const zoom = writable(1);
+
+  const round = (zoom: number) => {
+    return (1.0 / 16) * Math.floor(zoom * 16);
+  };
+
+  const zoomIn = (point: number) => {
+    zoom.update((z) => {
+      const lz = z;
+      const cz = round(Math.max(1, z * (4 / 5)));
+
+      pan.update(($pan) => panFromZoom($pan, point, lz, cz));
+
+      return cz;
+    });
+  };
+
+  const zoomOut = (point: number) => {
+    zoom.update((z) => {
+      const lz = z;
+      const cz = round(Math.min(16777216, z * (5 / 4)));
+
+      pan.update(($pan) => panFromZoom($pan, point, lz, cz));
+
+      return cz;
+    });
+  };
+
+  return {
+    zoomIn,
+    zoomOut,
+    subscribe: zoom.subscribe,
+  };
+};
+
+export const zoom = zoomStore();

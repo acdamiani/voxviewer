@@ -1,4 +1,4 @@
-import { WAVEFORM_BASE_SAMPLES_PER_PIXEL, ZOOM_FAC } from '$lib/util/constants';
+import { WAVEFORM_BASE_SAMPLES_PER_PIXEL } from '$lib/util/constants';
 import type SpectrogramData from './spectrogram-data';
 
 export default class SpectrogramRenderer {
@@ -16,8 +16,7 @@ export default class SpectrogramRenderer {
     channel: number,
     zoom: number,
   ) {
-    const samplesPerPixel =
-      WAVEFORM_BASE_SAMPLES_PER_PIXEL + ZOOM_FAC * (zoom ** 2 - 1);
+    const samplesPerPixel = WAVEFORM_BASE_SAMPLES_PER_PIXEL * zoom;
 
     const spectrogram = data.spectrogram(channel);
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Ticker, { type TickerConfig } from './ticker';
-  import { zoom, pan, buffer } from '$lib/stores';
+  import { zoom as zoomStore, pan as panStore, buffer } from '$lib/stores';
   import { subscribe } from 'svelte/internal';
 
   let w: number;
@@ -8,14 +8,14 @@
 
   let sd = 0;
 
-  let zoomValue: number;
-  subscribe(zoom, (zoom: number) => {
-    zoomValue = zoom;
+  let zoom: number;
+  subscribe(zoomStore, ($zoom: number) => {
+    zoom = $zoom;
   });
 
-  let panValue: number;
-  subscribe(pan, (pan: number) => {
-    panValue = pan;
+  let pan: number;
+  subscribe(panStore, ($pan: number) => {
+    pan = $pan;
   });
 
   let sampleRate: number;
@@ -26,7 +26,12 @@
   let canvas: HTMLCanvasElement;
 
   let ticker: Ticker;
-  $: if (ticker) ticker.render(zoomValue, panValue);
+  $: if (ticker) ticker.render(zoom, pan);
+
+  let point: number;
+  const mouseMove = (e: MouseEvent) => {
+    point = e.clientX - canvas.getBoundingClientRect().x;
+  };
 
   $: if (canvas && sampleRate) {
     const config: TickerConfig = {
@@ -35,7 +40,7 @@
     };
 
     ticker = new Ticker(config);
-    ticker.render(zoomValue, panValue);
+    ticker.render(zoom, pan);
   }
 
   $: if (canvas) {
@@ -53,14 +58,27 @@
 
       switch (e.key) {
         case '=':
+          zoomStore.zoomIn(point);
           e.preventDefault();
-          zoom.zoomIn();
           break;
         case '-':
+          zoomStore.zoomOut(point);
           e.preventDefault();
-          zoom.zoomOut();
           break;
       }
+    }
+
+    switch (e.key.toLowerCase()) {
+      case 'a':
+      case 'arrowleft':
+        panStore.update(($pan) => $pan - (e.shiftKey ? 100 : 25));
+        e.preventDefault();
+        break;
+      case 'd':
+      case 'arrowright':
+        panStore.update(($pan) => $pan + (e.shiftKey ? 100 : 25));
+        e.preventDefault();
+        break;
     }
   };
 
@@ -68,6 +86,8 @@
     const now = Date.now();
 
     if (e.ctrlKey) {
+      e.preventDefault();
+
       if (now - sd < 10) {
         return;
       }
@@ -75,18 +95,15 @@
       const direction = e.detail < 0 || e.deltaY > 0 ? 1 : -1;
 
       if (direction === -1) {
-        zoom.zoomIn();
-        console.log('zooming in');
+        zoomStore.zoomIn(point);
       } else {
-        zoom.zoomOut();
-        console.log('zooming out');
+        zoomStore.zoomOut(point);
       }
 
       sd = now;
-
+    } else if (Math.abs(e.deltaX) > 0) {
+      panStore.update((p) => p + e.deltaX);
       e.preventDefault();
-    } else {
-      pan.update((p) => p + e.deltaY);
     }
   };
 </script>
@@ -94,6 +111,7 @@
 <svelte:window
   on:keydown|stopPropagation={keydown}
   on:wheel|nonpassive|stopPropagation={wheel}
+  on:mousemove={mouseMove}
 />
 
 <div class="relative w-full h-full" bind:clientWidth={w} bind:clientHeight={h}>

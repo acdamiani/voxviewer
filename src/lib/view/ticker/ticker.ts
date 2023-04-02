@@ -2,7 +2,6 @@ import decimal from 'decimal.js';
 import {
   HORIZONTAL_TICKER_PADDING,
   WAVEFORM_BASE_SAMPLES_PER_PIXEL,
-  ZOOM_FAC,
 } from '$lib/util/constants';
 
 export type TickerConfig = {
@@ -17,18 +16,15 @@ export default class Ticker {
 
   private _padding: number;
   private _sampleRate: number;
-  private _samplesPerPixel: number;
 
   constructor(config: TickerConfig) {
     const values = {
       padding: HORIZONTAL_TICKER_PADDING,
-      samplesPerPixel: WAVEFORM_BASE_SAMPLES_PER_PIXEL,
       ...config,
     };
 
     this._canvas = values.canvas;
     this._padding = values.padding;
-    this._samplesPerPixel = values.samplesPerPixel;
     this._sampleRate = values.sampleRate;
   }
 
@@ -36,7 +32,7 @@ export default class Ticker {
     const width = new decimal(this._canvas.width);
     const padding = new decimal(this._padding);
     const widthNoPadding = width.minus(padding);
-    const samplesPerPixel = this._samplesPerPixel + ZOOM_FAC * (zoom ** 2 - 1);
+    const samplesPerPixel = WAVEFORM_BASE_SAMPLES_PER_PIXEL * zoom;
     const samples = widthNoPadding.mul(samplesPerPixel);
     const sampleRate = new decimal(this._sampleRate);
 

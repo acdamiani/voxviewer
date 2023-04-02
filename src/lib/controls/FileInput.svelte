@@ -1,7 +1,6 @@
 <script lang="ts">
   import IconPlus from '~icons/octicon/plus-24';
   import IconAudio from '~icons/fa6-solid/headphones';
-  import Button from './Button.svelte';
 
   let files: FileList | null;
 

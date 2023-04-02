@@ -19,7 +19,7 @@
 
   <!--Spectrogram-->
   <ViewFrame title="spectrogram">
-    <Spectrogram />
+    <!-- <Spectrogram /> -->
   </ViewFrame>
 
   <Controls />
