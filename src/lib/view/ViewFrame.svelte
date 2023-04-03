@@ -41,7 +41,7 @@
     <canvas hidden bind:this={offscreenCanvas} />
   </div>
   <div
-    class="absolute top-0 left-8 border border-t-0 border-neutral-800 bg-neutral-900 rounded-b-lg px-4 py-1"
+    class="absolute top-0 left-8 border border-t-0 border-neutral-800 bg-neutral-900 rounded-b-lg px-4 py-1 z-10 bg-opacity-75"
   >
     <span class="uppercase text-xs font-semibold tracking-widest leading-none"
       >{title}</span

@@ -93,11 +93,13 @@ export default class Ticker {
       sig = i % significantFactor === 0;
       x = decimal.round(position).toNumber();
 
+      const height = sig ? 18 : 8;
+
       ctx.fillStyle = sig ? 'rgb(113 113 122)' : 'rgb(39 39 42)';
-      ctx.fillRect(x - 1, 0, 2, sig ? 32 : 8);
+      ctx.fillRect(x - 1, this._canvas.height - height, 2, height);
 
       if (sig) {
-        ctx.fillText(time.toString(), x, 48);
+        ctx.fillText(time.toString(), x, this._canvas.height - height - 8);
       }
 
       time = time.plus(step);
