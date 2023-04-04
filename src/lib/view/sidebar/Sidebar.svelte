@@ -2,8 +2,8 @@
   import Settings from './Settings.svelte';
   import SidebarTabButton from './SidebarTabButton.svelte';
 
-  import IconGear from '~icons/octicon/gear-16';
-  import IconExport from '~icons/octicon/file-symlink-file-16';
+  import IconGear from '~icons/octicon/gear-24';
+  import IconExport from '~icons/octicon/file-symlink-file-24';
   import { onMount } from 'svelte';
 
   let selected: 'settings' | 'export' = 'settings';

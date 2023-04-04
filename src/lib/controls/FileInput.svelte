@@ -22,7 +22,7 @@
   <div
     class="p-3 text-neutral-200 font-bold rounded-lg disabled:opacity-50 flex flex-col gap-2 items-center justify-center bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 text-base transition-colors cursor-pointer w-full"
   >
-    <span class="text-2xl">
+    <span class="text-base">
       {#if files?.[0]}
         <IconAudio />
       {:else}

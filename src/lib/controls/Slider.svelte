@@ -52,7 +52,7 @@
   <span class="text-sm text-neutral-400">
     {minLabel ?? min}
   </span>
-  <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <span
     class="cursor-pointer relative inline-block box-content h-1 py-6 w-full"
     on:mousedown={() => (dragging = true)}

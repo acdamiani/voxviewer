@@ -19,11 +19,16 @@ module.exports = {
           '0%, 100%': { transform: 'scaleY(0.15)' },
           '50%': { transform: 'scaleY(1)' },
         },
+        fade: {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
       },
 
       animation: {
         scale: 'scale 2s cubic-bezier(0.87, 0, 0.13, 1) infinite forwards',
         spurt: 'spurt 2s cubic-bezier(0.25, 1, 0.5, 1) infinite forwards',
+        fade: 'fade 200ms ease-out',
       },
 
       boxShadow: {

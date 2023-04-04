@@ -4,8 +4,12 @@
   import IconInfo from '~icons/octicon/info-24';
   import IconGithub from '~icons/octicon/mark-github-16';
   import NavbarButton from './NavbarButton.svelte';
+  import Modal from '../Modal.svelte';
+  import Profile from '$lib/assets/profile.png';
+  import Signature from '$lib/assets/signature.png';
 
   let dark = true;
+  let infoModal = false;
 </script>
 
 <div
@@ -42,12 +46,80 @@
       {/if}
     </NavbarButton>
 
-    <NavbarButton>
-      <IconInfo />
-    </NavbarButton>
+    <a href="https://github.com/acdamiani/peekyourvoice">
+      <NavbarButton>
+        <IconGithub class="text-2xl" />
+      </NavbarButton>
+    </a>
 
-    <NavbarButton>
-      <IconGithub />
+    <NavbarButton on:click={() => (infoModal = !infoModal)}>
+      <IconInfo />
     </NavbarButton>
   </div>
 </div>
+
+<Modal bind:open={infoModal}>
+  <span slot="title">About</span>
+  <div class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-4">
+    <span class="text-xl text-neutral-50 font-semibold">The Project</span>
+    <p class="text-neutral-400">
+      A project for the 2023 <a
+        href="https://hack.sveltesociety.dev/"
+        class="text-teal-500 hover:text-teal-400 transition-colors"
+        >SvelteHack</a
+      > competition. An experiment with WebAssembly, Rust, and Web Workers, this
+      app takes given audio information and converts it into a dual waveform-spectrogram
+      visual representation.
+    </p>
+  </div>
+  <div class="w-full flex gap-2">
+    <div
+      class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-4 flex items-center justify-center gap-0.5"
+    >
+      <svg
+        width="64"
+        height="64"
+        viewBox="0 0 64 64"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect x="6" y="23" width="8" height="18" rx="4" fill="#FC8961" />
+        <rect x="28" y="4" width="8" height="42" rx="4" fill="#FCFDBF" />
+        <path
+          d="M21 18V44.3431C21 45.404 21.4214 46.4214 22.1716 47.1716L29.1716 54.1716C30.7337 55.7337 33.2663 55.7337 34.8284 54.1716L41.8284 47.1716C42.5786 46.4214 43 45.404 43 44.3431V18"
+          stroke="#FEC488"
+          stroke-width="8"
+          stroke-linecap="round"
+        />
+        <rect x="50" y="23" width="8" height="18" rx="4" fill="#FC8961" />
+      </svg>
+      <div />
+      <span class="flex">
+        <span class="text-3xl text-neutral-50 font-bold">vox</span>
+        <span class="text-3xl text-neutral-50">viewer</span>
+      </span>
+    </div>
+    <div
+      class="w-fit flex-shrink-0 bg-neutral-800 border border-neutral-700 rounded-lg p-4"
+    >
+      <span class="text-xl text-neutral-50 font-semibold">Made with ❤️</span>
+      <div class="mt-4 flex w-full items-center gap-4 justify-center">
+        <img
+          class="w-[65px] h-[65px] rounded-full"
+          src={Profile}
+          alt="profile"
+          width="65"
+          height="65"
+        />
+
+        <img
+          class="rounded-full"
+          src={Signature}
+          alt="profile"
+          width="92.25"
+          height="66"
+        />
+      </div>
+    </div>
+  </div>
+</Modal>

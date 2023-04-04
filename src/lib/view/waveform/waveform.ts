@@ -45,14 +45,14 @@ export default class WaveformRenderer {
     ctx.closePath();
     ctx.fill();
 
-    // if (data.length - offset < this.canvas.width) {
-    //   ctx.strokeStyle = 'rgb(20 184 166)';
-    //   ctx.beginPath();
-    //   ctx.moveTo(data.length - offset - 1, this.canvas.height / 2);
-    //   ctx.lineTo(this.canvas.width, this.canvas.height / 2);
-    //   ctx.closePath();
-    //   ctx.stroke();
-    // }
+    if (data.length - offset < this.canvas.width) {
+      ctx.strokeStyle = 'rgb(20 184 166)';
+      ctx.beginPath();
+      ctx.moveTo(data.length - offset - 1, this.canvas.height / 2);
+      ctx.lineTo(this.canvas.width, this.canvas.height / 2);
+      ctx.closePath();
+      ctx.stroke();
+    }
   }
 
   async render(waveform: WaveformData, zoom: number, pan: number) {
