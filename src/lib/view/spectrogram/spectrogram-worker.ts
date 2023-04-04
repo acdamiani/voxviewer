@@ -39,6 +39,7 @@ self.onmessage = (e) => {
 
     const bins = spectrogram.bins();
     const windows = spectrogram.windows();
+    const bg = spectrogram.bg();
 
     const arr = new Uint8Array(bins * windows * 3);
 
@@ -46,9 +47,10 @@ self.onmessage = (e) => {
 
     self.postMessage(
       {
-        bins: bins,
-        windows: windows,
+        bins,
+        windows,
         buffer: arr,
+        bg,
       },
       [arr.buffer],
     );

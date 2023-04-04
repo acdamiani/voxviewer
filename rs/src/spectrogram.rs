@@ -140,6 +140,11 @@ impl Spectrogram {
         }
     }
 
+    pub fn bg(&self) -> Result<String, JsError> {
+        let color = eval_col(self.colorscheme, 1.0);
+        Ok(format!("#{:05x}", color))
+    }
+
     pub fn compute(&mut self, buffer: &Uint8Array) -> Result<(), JsError> {
         if self.config.is_none() {
             return Err(JsError::new(

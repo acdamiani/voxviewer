@@ -24,3 +24,20 @@ export function getWorkerSupport(): 0 | 1 | 2 {
     return 0;
   }
 }
+
+export function cloneAudioBuffer(audioBuffer: AudioBuffer): AudioBuffer {
+  const newBuffer = new AudioBuffer({
+    length: audioBuffer.length,
+    numberOfChannels: audioBuffer.numberOfChannels,
+    sampleRate: audioBuffer.sampleRate,
+  });
+
+  const arr = new Float32Array(audioBuffer.length);
+
+  for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
+    audioBuffer.copyFromChannel(arr, i);
+    newBuffer.copyToChannel(arr, i);
+  }
+
+  return newBuffer;
+}

@@ -17,12 +17,12 @@
   <div class="relative h-full flex flex-col">
     <!--Waveform-->
     <ViewFrame title="waveform">
-      <!-- <Waveform /> -->
+      <Waveform />
     </ViewFrame>
 
     <!--Spectrogram-->
     <ViewFrame title="spectrogram">
-      <!-- <Spectrogram /> -->
+      <Spectrogram />
     </ViewFrame>
 
     <Playhead padding={HORIZONTAL_TICKER_PADDING} />

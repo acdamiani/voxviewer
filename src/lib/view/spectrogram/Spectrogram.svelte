@@ -25,22 +25,13 @@
 
   let loading = false;
 
-  let zoomValue: number;
-  zoom.subscribe((zoom) => {
-    zoomValue = zoom;
-  });
-
   let workerSupport: WorkerSupport;
   onMount(() => {
     workerSupport = getWorkerSupport();
   });
 
   $: if (data) {
-    try {
-      renderer.render(data, 0, zoomValue);
-    } catch (e: any) {
-      setError(e);
-    }
+    renderer.render(data, 0, $zoom).catch((e) => setError(e));
   }
 
   buffer.subscribe((b) => {
@@ -49,8 +40,6 @@
     }
 
     loading = true;
-
-    console.log(workerSupport);
 
     SpectrogramData.createFromAudioBuffer(b, {
       webWorker:
@@ -74,9 +63,20 @@
   onMount(() => {
     renderer = new SpectrogramRenderer(getCanvas(), getOffscreenCanvas());
   });
+
+  let resizeId: number;
+
+  const onResize = () => {
+    clearTimeout(resizeId);
+    resizeId = setTimeout(() => {
+      if (data) {
+        renderer.render(data, 0, $zoom).catch((e) => setError(e));
+      }
+    }, 100);
+  };
 </script>
 
-<div class="flex-none basis-16" />
+<svelte:window on:resize={onResize} />
 
 {#if loading}
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

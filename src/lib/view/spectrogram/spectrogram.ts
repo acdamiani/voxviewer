@@ -11,6 +11,7 @@ export default class JsSpectrogram {
   readonly buffer: Uint8Array;
   readonly bins: number;
   readonly windows: number;
+  readonly bg: string;
 
   readonly info: Required<SpectrogramOptions>;
 
@@ -19,11 +20,13 @@ export default class JsSpectrogram {
     bins: number,
     windows: number,
     info: Required<SpectrogramOptions>,
+    bg: string,
   ) {
     this.buffer = buffer;
     this.bins = bins;
     this.windows = windows;
     this.info = info;
+    this.bg = bg;
   }
 
   static async generateWithWorker(
@@ -49,9 +52,11 @@ export default class JsSpectrogram {
           bins,
           windows,
           buffer,
-        }: { bins: number; windows: number; buffer: Uint8Array } = e.data;
+          bg,
+        }: { bins: number; windows: number; buffer: Uint8Array; bg: string } =
+          e.data;
 
-        resolve(new JsSpectrogram(buffer, bins, windows, inputOptions));
+        resolve(new JsSpectrogram(buffer, bins, windows, inputOptions, bg));
       };
     });
   }
@@ -77,12 +82,13 @@ export default class JsSpectrogram {
 
       const bins = spectrogram.bins();
       const windows = spectrogram.windows();
+      const bg = spectrogram.bg();
 
       const arr = new Uint8Array(bins * windows * 3);
 
       spectrogram.compute(arr);
 
-      return new JsSpectrogram(arr, bins, windows, inputOptions);
+      return new JsSpectrogram(arr, bins, windows, inputOptions, bg);
     });
   }
 }

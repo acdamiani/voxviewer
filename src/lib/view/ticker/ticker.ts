@@ -79,8 +79,6 @@ export default class Ticker {
       secondsPerPixel.mul(TICKER_PIXEL_SPACING),
     );
 
-    console.log('s', step.toString(), factor.toString());
-
     const pixelStep = step.mul(pixelsPerSecond);
 
     const startingTicker = min.toNearest(step);

@@ -3,10 +3,13 @@ import type { SpectrogramOptions } from './glue';
 
 export default class SpectrogramData {
   readonly channels: number;
+  readonly options: SpectrogramOptions;
   private _spectrograms: JsSpectrogram[];
 
-  private constructor(channels: number) {
+  private constructor(channels: number, options: SpectrogramOptions) {
     this.channels = channels;
+    this.options = options;
+
     this._spectrograms = [];
   }
 
@@ -34,7 +37,7 @@ export default class SpectrogramData {
         ? JsSpectrogram.generateWithWorker(sample, options)
         : JsSpectrogram.generate(sample, options));
 
-      data = data ?? new SpectrogramData(buffer.numberOfChannels);
+      data = data ?? new SpectrogramData(buffer.numberOfChannels, options);
       data._insertSpectrogram(output);
     }
 

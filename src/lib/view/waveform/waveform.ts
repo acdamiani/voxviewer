@@ -1,4 +1,4 @@
-import { ZOOM_FAC } from '$lib/util/constants';
+import { WAVEFORM_BASE_SAMPLES_PER_PIXEL, ZOOM_FAC } from '$lib/util/constants';
 import type WaveformData from 'waveform-data';
 
 export default class WaveformRenderer {
@@ -16,7 +16,7 @@ export default class WaveformRenderer {
     return height - ((amplitude + offset) * height) / range;
   }
 
-  private _draw(data: WaveformData, offset: number, cache: boolean) {
+  private _draw(data: WaveformData, offset: number) {
     const ctx = this.canvas.getContext('2d');
 
     if (!ctx) {
@@ -57,9 +57,9 @@ export default class WaveformRenderer {
 
   async render(waveform: WaveformData, zoom: number, pan: number) {
     const resampled = waveform.resample({
-      scale: waveform.scale + ZOOM_FAC * (zoom ** 2 - 1),
+      scale: zoom * WAVEFORM_BASE_SAMPLES_PER_PIXEL,
     });
-    this._draw(resampled, Math.round(pan), zoom !== this._lastZoom);
+    this._draw(resampled, Math.round(pan));
     this._lastZoom = zoom;
   }
 }
