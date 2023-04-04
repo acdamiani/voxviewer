@@ -3,7 +3,7 @@
 
   import Button from '$lib/controls/Button.svelte';
   import FileInput from '$lib/controls/FileInput.svelte';
-  import AudioFile from '$lib/audio/audio';
+  import AudioFile from '$lib/audio/file';
   import Slider from '$lib/controls/Slider.svelte';
   import Group from '$lib/controls/Group.svelte';
   import SwitchButton from '$lib/controls/SwitchButton/SwitchButton.svelte';
@@ -12,8 +12,6 @@
   import WindowFunctionSelector from '$lib/settings/WindowFunctionSelector.svelte';
 
   import IconSearch from '~icons/octicon/search-16';
-
-  import SidebarTab from './SidebarTab.svelte';
 
   import type {
     GaussianAlphas,

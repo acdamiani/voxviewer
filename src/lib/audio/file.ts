@@ -32,6 +32,10 @@ export default class AudioFile {
     return this._buffer;
   }
 
+  static get context(): AudioContext {
+    return AudioFile._ctx;
+  }
+
   async load(): Promise<AudioBuffer> {
     if (this._buffer !== null) {
       return Promise.resolve(this._buffer);

@@ -1,4 +1,9 @@
 export { zoom, pan } from './view';
-export { audio, buffer } from './audio';
+export {
+  audio,
+  buffer,
+  player,
+  playerPosition,
+  playerPositionPixels,
+} from './audio';
 export { settings } from './settings';
-export { playhead } from './playback';

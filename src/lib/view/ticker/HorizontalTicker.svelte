@@ -1,6 +1,6 @@
 <script lang="ts">
   import Ticker, { type TickerConfig } from './ticker';
-  import { zoom, pan, buffer, playhead } from '$lib/stores';
+  import { zoom, pan, buffer, playerPositionPixels } from '$lib/stores';
   import { subscribe } from 'svelte/internal';
 
   let w: number;
@@ -43,11 +43,11 @@
 
       switch (e.key) {
         case '=':
-          zoom.zoomIn($playhead, canvas.width);
+          zoom.zoomIn($playerPositionPixels);
           e.preventDefault();
           break;
         case '-':
-          zoom.zoomOut($playhead, canvas.width);
+          zoom.zoomOut($playerPositionPixels);
           e.preventDefault();
           break;
       }
@@ -80,9 +80,9 @@
       const direction = e.detail < 0 || e.deltaY > 0 ? 1 : -1;
 
       if (direction === -1) {
-        zoom.zoomIn($playhead, canvas.width);
+        zoom.zoomIn($playerPositionPixels);
       } else {
-        zoom.zoomOut($playhead, canvas.width);
+        zoom.zoomOut($playerPositionPixels);
       }
 
       sd = now;

@@ -1,18 +1,17 @@
 import { writable } from 'svelte/store';
 import type { Updater } from 'svelte/store';
+import { ZOOM_FAC } from '$lib/util/constants';
 
 const panStore = () => {
   const { set: storeSet, update: storeUpdate, subscribe } = writable(0);
 
   const set = (value: number) => {
-    // storeSet(value);
     storeSet(Math.max(0, value));
   };
 
   const update = (updater: Updater<number>) => {
     const selfUpdater = (value: number): number => {
-      return Math.max(updater(value));
-      // return Math.max(0, c);
+      return Math.max(0, updater(value));
     };
     storeUpdate(selfUpdater);
   };
@@ -41,7 +40,7 @@ const zoomStore = () => {
   const zoomIn = (point: number) => {
     zoom.update((z) => {
       const lz = z;
-      const cz = round(Math.max(1, z * (4 / 5)));
+      const cz = round(Math.max(1, z * ZOOM_FAC ** -1));
 
       pan.update(($pan) => panFromZoom($pan, point, lz, cz));
 
@@ -52,7 +51,7 @@ const zoomStore = () => {
   const zoomOut = (point: number) => {
     zoom.update((z) => {
       const lz = z;
-      const cz = round(Math.min(16777216, z * (5 / 4)));
+      const cz = round(Math.min(16777216, z * ZOOM_FAC));
       pan.update(($pan) => panFromZoom($pan, point, lz, cz));
 
       return cz;
