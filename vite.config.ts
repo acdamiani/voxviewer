@@ -21,7 +21,6 @@ export default defineConfig({
             props.height = '1.5em';
             break;
           case 'octicon':
-            console.log(icon);
             if (icon.endsWith('24')) {
               props.width = '1.5em';
               props.height = '1.5em';
