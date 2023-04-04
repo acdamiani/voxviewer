@@ -17,7 +17,7 @@
     "@iconify-json/fa6-solid": "1.1.13",
     "@iconify-json/octicon": "1.1.37",
     "@sveltejs/adapter-auto": "2.0.0",
-    "@sveltejs/kit": "1.14.0",
+    "@sveltejs/kit": "1.15.0",
     "@types/shortid": "0.0.29",
     "@typescript-eslint/eslint-plugin": "5.57.0",
     "@typescript-eslint/parser": "5.57.0",
