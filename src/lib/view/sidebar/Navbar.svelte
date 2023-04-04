@@ -104,13 +104,18 @@
     >
       <span class="text-xl text-neutral-50 font-semibold">Made with ❤️</span>
       <div class="mt-4 flex w-full items-center gap-4 justify-center">
-        <img
-          class="w-[65px] h-[65px] rounded-full"
-          src={Profile}
-          alt="profile"
-          width="65"
-          height="65"
-        />
+        <a
+          class="scale-100 hover:scale-105 transition-transform"
+          href="https://github.com/acdamiani"
+        >
+          <img
+            class="w-[65px] h-[65px] rounded-full"
+            src={Profile}
+            alt="profile"
+            width="65"
+            height="65"
+          />
+        </a>
 
         <img
           class="rounded-full"
