@@ -20,10 +20,10 @@
     }
   };
 
-  let mouseBar: HTMLDivElement;
+  let clickableArea: HTMLDivElement;
 
-  $: if (mouseBar) {
-    offset = mouseBar.getBoundingClientRect().x;
+  $: if (clickableArea) {
+    offset = clickableArea.getBoundingClientRect().left;
   }
 
   export let padding = 0;
@@ -36,12 +36,18 @@
   };
 
   const mouseDown = (e: MouseEvent) => {
-    if (!mouseBar) {
+    if (!clickableArea) {
       return;
     }
 
-    const rect = mouseBar.getBoundingClientRect();
-    if (e.button !== 0 || e.clientY <= rect.top || e.clientY >= rect.bottom) {
+    const rect = clickableArea.getBoundingClientRect();
+    if (
+      e.button !== 0 ||
+      e.clientX < rect.left ||
+      e.clientX > rect.right ||
+      e.clientY > rect.bottom ||
+      e.clientY < rect.top
+    ) {
       return;
     }
 
@@ -60,10 +66,11 @@
 />
 
 {#if $buffer}
+  <div class="block absolute inset-0 invisible" bind:this={clickableArea} />
+
   <div
     class="absolute inset-0 right-auto w-px bg-neutral-700 bg-opacity-25"
     style="transform: translateX({position}px);"
-    bind:this={mouseBar}
   />
 
   <div
