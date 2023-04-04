@@ -46,7 +46,6 @@ const audioStore = () => {
     const loop = () => {
       id = null;
       set($player.position);
-      console.log('going');
       start();
     };
 

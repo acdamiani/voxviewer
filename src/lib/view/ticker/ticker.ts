@@ -1,6 +1,7 @@
 import decimal from 'decimal.js';
 import {
   HORIZONTAL_TICKER_PADDING,
+  TICKER_PIXEL_SPACING,
   WAVEFORM_BASE_SAMPLES_PER_PIXEL,
 } from '$lib/util/constants';
 
@@ -28,50 +29,68 @@ export default class Ticker {
     this._sampleRate = values.sampleRate;
   }
 
+  private _niceStep(seconds: decimal.Value): {
+    step: decimal;
+    factor: 1 | 2 | 5 | 10;
+  } {
+    seconds = new decimal(seconds);
+    const exp = decimal.floor(decimal.log10(seconds));
+    const frac = seconds.div(decimal.pow(10, exp));
+
+    let niceFrac: decimal;
+    let factor: 1 | 2 | 5 | 10;
+
+    if (frac.lte(1)) {
+      niceFrac = new decimal(1);
+      factor = 1;
+    } else if (frac.lte(2)) {
+      niceFrac = new decimal(2);
+      factor = 2;
+    } else if (frac.lte(5)) {
+      niceFrac = new decimal(5);
+      factor = 5;
+    } else {
+      niceFrac = new decimal(10);
+      factor = 10;
+    }
+
+    return {
+      step: decimal.pow(10, exp).mul(niceFrac).div(factor),
+      factor,
+    };
+  }
+
   render(zoom: number, pan: number) {
     const width = new decimal(this._canvas.width);
     const padding = new decimal(this._padding);
-    const widthNoPadding = width.minus(padding);
-    const samplesPerPixel = WAVEFORM_BASE_SAMPLES_PER_PIXEL * zoom;
+    const widthNoPadding = width.sub(padding);
+    const samplesPerPixel = new decimal(WAVEFORM_BASE_SAMPLES_PER_PIXEL * zoom);
     const samples = widthNoPadding.mul(samplesPerPixel);
     const sampleRate = new decimal(this._sampleRate);
 
     const extent = samples.div(this._sampleRate);
     const pixelsPerSecond = sampleRate.div(samplesPerPixel);
-    const tickerPan = new decimal(samplesPerPixel * pan).div(sampleRate);
-    const min = tickerPan.minus(padding.mul(samplesPerPixel).div(sampleRate));
+    const secondsPerPixel = samplesPerPixel.div(sampleRate);
+    const tickerPan = samplesPerPixel.mul(pan).div(sampleRate);
+    const min = tickerPan.sub(padding.mul(samplesPerPixel).div(sampleRate));
     const max = tickerPan.plus(extent);
 
-    let step: decimal;
-    let significantFactor: 2 | 5;
-
-    const factor = decimal.pow(
-      10,
-      decimal.floor(decimal.log10(extent)).minus(1),
+    const { step, factor } = this._niceStep(
+      secondsPerPixel.mul(TICKER_PIXEL_SPACING),
     );
 
-    if (
-      decimal
-        .abs(extent.minus(factor))
-        .lessThan(decimal.abs(extent.minus(factor.mul(5))))
-    ) {
-      step = factor.div(2);
-      significantFactor = 2;
-    } else {
-      step = factor;
-      significantFactor = 5;
-    }
+    console.log('s', step.toString(), factor.toString());
 
     const pixelStep = step.mul(pixelsPerSecond);
 
     const startingTicker = min.toNearest(step);
-    const startingSigTicker = min.toNearest(step.times(significantFactor));
+    const startingSigTicker = min.toNearest(step.times(factor));
 
     let time = startingTicker;
-    let position = startingTicker.minus(min).mul(pixelsPerSecond);
+    let position = startingTicker.sub(min).mul(pixelsPerSecond);
 
     const significantOffset = startingSigTicker
-      .minus(startingTicker)
+      .sub(startingTicker)
       .div(step)
       .toNumber();
 
@@ -90,7 +109,7 @@ export default class Ticker {
     let x = 0;
 
     for (let i = -significantOffset; time.lessThanOrEqualTo(max); i++) {
-      sig = i % significantFactor === 0;
+      sig = i % factor === 0;
       x = decimal.round(position).toNumber();
 
       const height = sig ? 18 : 8;
