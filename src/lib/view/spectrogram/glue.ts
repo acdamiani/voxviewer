@@ -51,6 +51,6 @@ export function defaultOptions(
     windowFunction: options.windowFunction ?? 'hann',
     offset: options.offset ?? 20,
     range: options.range ?? 80,
-    colorscheme: options.colorscheme ?? 'blackWhite',
+    colorscheme: options.colorscheme ?? 'magma',
   };
 }

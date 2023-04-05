@@ -29,6 +29,10 @@ export default defineConfig({
               props.height = '1em';
             }
             break;
+          default:
+            props.width = '1.5em';
+            props.height = '1.5em';
+            break;
         }
       },
     }),

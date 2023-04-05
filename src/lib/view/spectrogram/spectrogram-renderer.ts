@@ -36,8 +36,6 @@ export default class SpectrogramRenderer {
       Math.min(ctx.canvas.height, bins),
     );
 
-    console.log(imageData.width);
-
     const fac = [
       imageData.width / Math.min(windows, windowsInView),
       bins / ctx.canvas.height,
