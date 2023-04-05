@@ -32,7 +32,7 @@ export default class SpectrogramRenderer {
     const ratioedWindows = Math.floor(windows / pxRatio);
 
     const imageData = ctx.createImageData(
-      Math.min(ratioedWindows, windowsInView),
+      pxRatio <= 1 ? windowsInView : Math.min(ctx.canvas.width, ratioedWindows),
       Math.min(ctx.canvas.height, bins),
     );
 
