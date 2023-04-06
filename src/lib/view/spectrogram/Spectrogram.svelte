@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { buffer, zoom } from '$lib/stores';
+  import { buffer, zoom, pan } from '$lib/stores';
   import { getContext, onMount } from 'svelte';
   import SpectrogramRenderer from './spectrogram-renderer';
   import SpectrogramData from './spectrogram-data';
@@ -31,7 +31,7 @@
   });
 
   $: if (data) {
-    renderer.render(data, 0, $zoom).catch((e) => setError(e));
+    renderer.render(data, 0, $zoom, $pan).catch((e) => setError(e));
   }
 
   buffer.subscribe((b) => {

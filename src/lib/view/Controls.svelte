@@ -5,6 +5,7 @@
   import Select from '$lib/controls/Select.svelte';
   import SmallButton from '$lib/controls/SmallButton.svelte';
   import OptionsSection from '$lib/OptionsSection.svelte';
+  import { playerPosition } from '$lib/stores';
   import PlaybackControls from './PlaybackControls.svelte';
 </script>
 
@@ -16,14 +17,10 @@
   </div>
   <PlaybackControls />
   <div class="w-full flex justify-end items-center">
-    <DropdownButton>
-      <span slot="button">Save</span>
-      <OptionsSection>
-        <span slot="title">Waveform</span>
-      </OptionsSection>
-      <OptionsSection>
-        <span slot="title">Spectrogram</span>
-      </OptionsSection>
-    </DropdownButton>
+    <div class="rounded-lg bg-neutral-900 border border-neutral-800 px-4">
+      <span class="text-4xl font-mono">
+        {$playerPosition.toFixed(2)}s
+      </span>
+    </div>
   </div>
 </div>

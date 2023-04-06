@@ -15,6 +15,7 @@ export default class SpectrogramRenderer {
     data: SpectrogramData,
     channel: number,
     zoom: number,
+    pan: number,
   ) {
     const samplesPerPixel = zoom * WAVEFORM_BASE_SAMPLES_PER_PIXEL;
 
@@ -28,6 +29,7 @@ export default class SpectrogramRenderer {
     const windowsInView = Math.floor(
       (ctx.canvas.width * samplesPerPixel * 2) / info.windowSize,
     );
+
     const pxRatio = windowsInView / ctx.canvas.width;
     const ratioedWindows = Math.floor(windows / pxRatio);
 
@@ -37,7 +39,7 @@ export default class SpectrogramRenderer {
     );
 
     const fac = [
-      imageData.width / Math.min(windows, windowsInView),
+      Math.min(windows, windowsInView) / imageData.width,
       bins / ctx.canvas.height,
     ];
 
@@ -49,7 +51,7 @@ export default class SpectrogramRenderer {
     let i: number;
 
     for (let x = 0; x < imageData.width; x++) {
-      currentWindow = (x / fac[0]) | 0;
+      currentWindow = (x * fac[0]) | 0;
 
       for (let y = 0; y < imageData.height; y++) {
         currentBin = (y * fac[1]) | 0;
@@ -100,6 +102,7 @@ export default class SpectrogramRenderer {
     data: SpectrogramData,
     channel: number,
     zoom: number,
+    pan: number,
   ): Promise<void> {
     const ctx = this.canvas.getContext('2d');
 
@@ -109,7 +112,7 @@ export default class SpectrogramRenderer {
 
     return new Promise((resolve) => {
       window.requestAnimationFrame(() => {
-        this._generateImageData(ctx, data, channel, zoom);
+        this._generateImageData(ctx, data, channel, zoom, pan);
         resolve();
       });
     });

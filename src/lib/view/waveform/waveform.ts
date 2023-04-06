@@ -30,14 +30,16 @@ export default class WaveformRenderer {
     ctx.fillStyle = 'rgb(20 184 166)';
     const channel = data.channel(0);
 
-    for (let x = 0; x < data.length; x++) {
-      const val = channel.max_sample(x);
+    const len = Math.min(data.length - offset, this.canvas.width);
+
+    for (let x = 0; x < len; x++) {
+      const val = channel.max_sample(x + offset);
 
       ctx.lineTo(x + 0.5, this._scaleHeight(val, this.canvas.height) + 0.5);
     }
 
-    for (let x = data.length - 1; x >= 0; x--) {
-      const val = channel.min_sample(x);
+    for (let x = len - 1; x >= 0; x--) {
+      const val = channel.min_sample(x + offset);
 
       ctx.lineTo(x + 0.5, this._scaleHeight(val, this.canvas.height) + 0.5);
     }
