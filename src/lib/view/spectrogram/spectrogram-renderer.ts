@@ -1,101 +1,143 @@
-import { WAVEFORM_BASE_SAMPLES_PER_PIXEL } from '$lib/util/constants';
+import {
+  SPECTROGRAM_CHUNK_SIZE,
+  WAVEFORM_BASE_SAMPLES_PER_PIXEL,
+} from '$lib/util/constants';
+import type { SpectrogramOptions } from './glue';
+import type JsSpectrogram from './spectrogram';
 import type SpectrogramData from './spectrogram-data';
 
 export default class SpectrogramRenderer {
   readonly canvas: HTMLCanvasElement;
-  readonly offscreenCanvas: HTMLCanvasElement;
+  readonly offscreenCanvases: HTMLCanvasElement[];
+  private _spectrogram: JsSpectrogram;
+  private _channel: number;
+  private _generated: boolean;
 
-  constructor(canvas: HTMLCanvasElement, offscreenCanvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    this.offscreenCanvas = offscreenCanvas;
+    this.offscreenCanvases = [];
   }
 
-  private async _generateImageData(
-    ctx: CanvasRenderingContext2D,
+  // TODO: Put this in a Web Worker
+  private _generateImageData(
+    parent: Node,
     data: SpectrogramData,
     channel: number,
-    zoom: number,
-    pan: number,
   ) {
-    const samplesPerPixel = zoom * WAVEFORM_BASE_SAMPLES_PER_PIXEL;
+    for (const node of parent.childNodes) {
+      const child = node as HTMLElement;
 
-    const spectrogram = data.spectrogram(channel);
-
-    const windows = spectrogram.windows;
-    const bins = spectrogram.bins;
-    const buffer = spectrogram.buffer;
-    const info = spectrogram.info;
-
-    const windowsInView = Math.floor(
-      (ctx.canvas.width * samplesPerPixel * 2) / info.windowSize,
-    );
-
-    const pxRatio = windowsInView / ctx.canvas.width;
-    const ratioedWindows = Math.floor(windows / pxRatio);
-
-    const imageData = ctx.createImageData(
-      pxRatio <= 1 ? windowsInView : Math.min(ctx.canvas.width, ratioedWindows),
-      Math.min(ctx.canvas.height, bins),
-    );
-
-    const fac = [
-      Math.min(windows, windowsInView) / imageData.width,
-      bins / ctx.canvas.height,
-    ];
-
-    const pixels = imageData.data;
-
-    let currentWindow: number;
-    let currentBin: number;
-
-    let i: number;
-
-    for (let x = 0; x < imageData.width; x++) {
-      currentWindow = (x * fac[0]) | 0;
-
-      for (let y = 0; y < imageData.height; y++) {
-        currentBin = (y * fac[1]) | 0;
-
-        i =
-          (currentWindow * ((info.windowSize * info.zeroPaddingFactor) / 2) +
-            currentBin) *
-          3;
-
-        const arrOffset = ((imageData.height - y) * imageData.width + x) * 4;
-        pixels[arrOffset] = buffer[i];
-        pixels[arrOffset + 1] = buffer[i + 1];
-        pixels[arrOffset + 2] = buffer[i + 2];
-        pixels[arrOffset + 3] = 255;
+      if (child && child.classList.contains('_ctx')) {
+        parent.removeChild(child);
       }
     }
 
-    ctx.imageSmoothingEnabled = false;
+    this.offscreenCanvases.length = 0;
+
+    this._spectrogram = data.spectrogram(channel);
+    const imageData = new ImageData(
+      SPECTROGRAM_CHUNK_SIZE,
+      this._spectrogram.bins,
+    );
+    const arr = imageData.data;
+    const winOffset =
+      (this._spectrogram.info.windowSize *
+        this._spectrogram.info.zeroPaddingFactor) /
+      2;
+    const bgCol = this._spectrogram.rgbBackground;
+
+    for (
+      let chunk = 0;
+      chunk < Math.ceil(this._spectrogram.windows / SPECTROGRAM_CHUNK_SIZE);
+      chunk++
+    ) {
+      const offset = chunk * SPECTROGRAM_CHUNK_SIZE;
+
+      for (let y = 0; y < imageData.height; y++) {
+        let x = 0;
+        for (
+          ;
+          x < Math.min(this._spectrogram.windows - offset, imageData.width);
+          x++
+        ) {
+          const ao = ((imageData.height - y) * imageData.width + x) * 4;
+          const so = ((x + offset) * winOffset + y) * 3;
+          arr[ao] = this._spectrogram.buffer[so];
+          arr[ao + 1] = this._spectrogram.buffer[so + 1];
+          arr[ao + 2] = this._spectrogram.buffer[so + 2];
+          arr[ao + 3] = 255;
+        }
+
+        for (; x < imageData.width; x++) {
+          const ao = ((imageData.height - y) * imageData.width + x) * 4;
+          arr[ao] = bgCol[0];
+          arr[ao + 1] = bgCol[1];
+          arr[ao + 2] = bgCol[2];
+          arr[ao + 3] = 255;
+        }
+      }
+
+      // Probably not best practice...
+      const canvas = document.createElement('canvas');
+      canvas.width = SPECTROGRAM_CHUNK_SIZE;
+      canvas.height = this._spectrogram.bins;
+      canvas.className = '_ctx';
+
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        throw new Error('Could not create canvas context');
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      parent.appendChild(canvas);
+      this.offscreenCanvases.push(canvas);
+    }
+  }
+
+  private _draw(ctx: CanvasRenderingContext2D, zoom: number, pan: number) {
+    const samplesPerPixel = zoom * WAVEFORM_BASE_SAMPLES_PER_PIXEL;
+    const zoomRatio = (samplesPerPixel * 2) / this._spectrogram.info.windowSize;
+    const chunkSize = SPECTROGRAM_CHUNK_SIZE / zoomRatio;
+
+    let w = -pan,
+      i = 0;
+
+    const bg = this._spectrogram.bg;
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.globalCompositeOperation = 'copy';
-    ctx.putImageData(imageData, 0, 0);
 
-    let width = imageData.width;
-    if (pxRatio <= 1) {
-      ctx.globalCompositeOperation = 'copy';
-      width = Math.min(ctx.canvas.width, ratioedWindows);
+    while (w < ctx.canvas.width) {
+      const canvas = this.offscreenCanvases[i];
+
+      if (!canvas) {
+        ctx.fillStyle = bg;
+        ctx.fillRect(w, 0, ctx.canvas.width - w, ctx.canvas.height);
+
+        break;
+      }
+
+      const offset = -pan + i * chunkSize;
+
+      w += chunkSize;
+      i++;
+
+      if (offset + chunkSize < 0) {
+        continue;
+      }
+
       ctx.drawImage(
-        ctx.canvas,
+        canvas,
         0,
         0,
-        imageData.width,
-        imageData.height,
+        canvas.width,
+        canvas.height,
+        offset,
         0,
-        0,
-        width,
+        chunkSize,
         ctx.canvas.height,
       );
     }
-
-    ctx.globalCompositeOperation = 'source-over';
-
-    ctx.fillStyle = spectrogram.bg;
-    ctx.fillRect(width, 0, ctx.canvas.width - width, ctx.canvas.height);
   }
 
   async render(
@@ -110,9 +152,17 @@ export default class SpectrogramRenderer {
       throw new Error('Error initializing spectrogram canvas');
     }
 
+    if (
+      this._channel !== channel ||
+      data.spectrogram(channel).id !== this._spectrogram.id
+    ) {
+      this._generateImageData(this.canvas, data, channel);
+      this._channel = channel;
+    }
+
     return new Promise((resolve) => {
       window.requestAnimationFrame(() => {
-        this._generateImageData(ctx, data, channel, zoom, pan);
+        this._draw(ctx, zoom, pan);
         resolve();
       });
     });

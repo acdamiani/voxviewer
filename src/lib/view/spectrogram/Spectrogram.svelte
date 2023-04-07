@@ -8,10 +8,8 @@
 
   const {
     getCanvas,
-    getOffscreenCanvas,
   }: {
     getCanvas: () => HTMLCanvasElement;
-    getOffscreenCanvas: () => HTMLCanvasElement;
   } = getContext('__pyv_canvas');
 
   const {
@@ -61,7 +59,7 @@
   });
 
   onMount(() => {
-    renderer = new SpectrogramRenderer(getCanvas(), getOffscreenCanvas());
+    renderer = new SpectrogramRenderer(getCanvas());
   });
 
   let resizeId: number;
@@ -70,7 +68,7 @@
     clearTimeout(resizeId);
     resizeId = setTimeout(() => {
       if (data) {
-        renderer.render(data, 0, $zoom).catch((e) => setError(e));
+        renderer.render(data, 0, $zoom, $pan).catch((e) => setError(e));
       }
     }, 100);
   };

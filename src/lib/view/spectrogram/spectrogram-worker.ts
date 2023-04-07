@@ -40,6 +40,7 @@ self.onmessage = (e) => {
     const bins = spectrogram.bins();
     const windows = spectrogram.windows();
     const bg = spectrogram.bg();
+    const id = spectrogram.id();
 
     const arr = new Uint8Array(bins * windows * 3);
 
@@ -51,6 +52,7 @@ self.onmessage = (e) => {
         windows,
         buffer: arr,
         bg,
+        id,
       },
       [arr.buffer],
     );

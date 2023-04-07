@@ -27,7 +27,7 @@ export const pan = panStore();
 
 const panFromZoom = (pan: number, point: number, lz: number, cz: number) => {
   const fac = cz / lz;
-  return point / fac + pan / fac - point;
+  return Math.round(point / fac + pan / fac - point);
 };
 
 const zoomStore = () => {

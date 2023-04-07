@@ -12,6 +12,7 @@ export default class JsSpectrogram {
   readonly bins: number;
   readonly windows: number;
   readonly bg: string;
+  readonly id: string;
 
   readonly info: Required<SpectrogramOptions>;
 
@@ -21,12 +22,25 @@ export default class JsSpectrogram {
     windows: number,
     info: Required<SpectrogramOptions>,
     bg: string,
+    id: string,
   ) {
     this.buffer = buffer;
     this.bins = bins;
     this.windows = windows;
     this.info = info;
     this.bg = bg;
+    this.id = id;
+  }
+
+  get rgbBackground(): [number, number, number] {
+    return this.bg
+      .replace(
+        /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+        (_, r, g, b) => '#' + r + r + g + g + b + b,
+      )
+      .substring(1)
+      .match(/.{2}/g)
+      ?.map((x) => parseInt(x, 16)) as [number, number, number];
   }
 
   static async generateWithWorker(
@@ -53,10 +67,16 @@ export default class JsSpectrogram {
           windows,
           buffer,
           bg,
-        }: { bins: number; windows: number; buffer: Uint8Array; bg: string } =
-          e.data;
+          id,
+        }: {
+          bins: number;
+          windows: number;
+          buffer: Uint8Array;
+          bg: string;
+          id: string;
+        } = e.data;
 
-        resolve(new JsSpectrogram(buffer, bins, windows, inputOptions, bg));
+        resolve(new JsSpectrogram(buffer, bins, windows, inputOptions, bg, id));
       };
     });
   }
@@ -83,12 +103,13 @@ export default class JsSpectrogram {
       const bins = spectrogram.bins();
       const windows = spectrogram.windows();
       const bg = spectrogram.bg();
+      const id = spectrogram.id();
 
       const arr = new Uint8Array(bins * windows * 3);
 
       spectrogram.compute(arr);
 
-      return new JsSpectrogram(arr, bins, windows, inputOptions, bg);
+      return new JsSpectrogram(arr, bins, windows, inputOptions, bg, id);
     });
   }
 }

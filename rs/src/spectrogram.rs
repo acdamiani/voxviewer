@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use realfft::{num_complex::Complex, RealFftPlanner, RealToComplex};
+use uuid::Uuid;
 use wasm_bindgen::prelude::*;
 
 use js_sys::Uint8Array;
@@ -70,6 +71,8 @@ impl SpectrogramComputationConfig {
 
 #[wasm_bindgen]
 pub struct Spectrogram {
+    id: Uuid,
+
     win_size: usize,
     zero_pad_fac: usize,
     win_func: Window,
@@ -105,7 +108,9 @@ impl Spectrogram {
             return Err(JsError::new("zero_pad_fac should be a power of two"));
         }
 
+        let id = Uuid::new_v4();
         Ok(Self {
+            id,
             planner: RealFftPlanner::new(),
             win_size: win_size as usize,
             zero_pad_fac: zero_pad_fac as usize,
@@ -143,6 +148,10 @@ impl Spectrogram {
     pub fn bg(&self) -> Result<String, JsError> {
         let color = eval_col(self.colorscheme, 1.0);
         Ok(format!("#{:05x}", color))
+    }
+
+    pub fn id(&self) -> Result<String, JsError> {
+        Ok(self.id.simple().to_string())
     }
 
     pub fn compute(&mut self, buffer: &Uint8Array) -> Result<(), JsError> {
