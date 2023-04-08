@@ -61,6 +61,7 @@ const zoomStore = () => {
   return {
     zoomIn,
     zoomOut,
+    set: zoom.set,
     subscribe: zoom.subscribe,
   };
 };

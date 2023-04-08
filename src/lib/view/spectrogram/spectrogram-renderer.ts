@@ -2,7 +2,6 @@ import {
   SPECTROGRAM_CHUNK_SIZE,
   WAVEFORM_BASE_SAMPLES_PER_PIXEL,
 } from '$lib/util/constants';
-import type { SpectrogramOptions } from './glue';
 import type JsSpectrogram from './spectrogram';
 import type SpectrogramData from './spectrogram-data';
 
@@ -11,7 +10,6 @@ export default class SpectrogramRenderer {
   readonly offscreenCanvases: HTMLCanvasElement[];
   private _spectrogram: JsSpectrogram;
   private _channel: number;
-  private _generated: boolean;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -128,6 +126,7 @@ export default class SpectrogramRenderer {
         continue;
       }
 
+      ctx.imageSmoothingEnabled = false;
       ctx.drawImage(
         canvas,
         0,
@@ -178,7 +177,5 @@ export default class SpectrogramRenderer {
     }
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    console.log('going');
   }
 }

@@ -1,19 +1,28 @@
 <script lang="ts">
   import Ticker, { type TickerConfig } from './ticker';
   import { zoom, pan, buffer, playerPositionPixels } from '$lib/stores';
-  import { subscribe } from 'svelte/internal';
+  import { WAVEFORM_BASE_SAMPLES_PER_PIXEL } from '$lib/util/constants';
 
   let w: number;
   let h: number;
 
   let sd = 0;
 
-  let sampleRate: number;
-  subscribe(buffer, (buffer: AudioBuffer) => {
-    sampleRate = buffer?.sampleRate;
-  });
+  $: sampleRate = $buffer?.sampleRate;
 
   let canvas: HTMLCanvasElement;
+
+  buffer.subscribe(($buffer) => {
+    if (!canvas) {
+      return;
+    }
+
+    pan.set(0);
+    console.log(
+      $buffer.length / (WAVEFORM_BASE_SAMPLES_PER_PIXEL * canvas.width),
+    );
+    zoom.set($buffer.length / (WAVEFORM_BASE_SAMPLES_PER_PIXEL * canvas.width));
+  });
 
   let ticker: Ticker;
   $: if (ticker) ticker.render($zoom, $pan);
