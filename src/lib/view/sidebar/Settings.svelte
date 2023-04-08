@@ -47,7 +47,7 @@
   let windowSize = 10;
   let zeroPaddingFactor = 1;
 
-  $: {
+  const submit = () => {
     settings.set({
       ...$settings,
       windowSize: 2 ** windowSize,
@@ -57,6 +57,8 @@
         : windowFunctionKind) as WindowFunction,
       colorscheme: colorscheme,
     });
+
+    loadFile();
   }
 </script>
 
@@ -105,7 +107,7 @@
 
   <ColorschemeSelector bind:colorscheme />
 
-  <Button disabled={!file} on:click={loadFile}>
+  <Button disabled={!file} on:click={submit}>
     <IconSearch slot="icon" />
     Analyze</Button
   >

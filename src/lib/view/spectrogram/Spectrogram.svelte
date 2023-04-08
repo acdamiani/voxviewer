@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { buffer, zoom, pan } from '$lib/stores';
+  import { buffer, zoom, pan, settings } from '$lib/stores';
   import { getContext, onMount } from 'svelte';
   import SpectrogramRenderer from './spectrogram-renderer';
   import SpectrogramData from './spectrogram-data';
@@ -32,21 +32,18 @@
     renderer.render(data, 0, $zoom, $pan).catch((e) => setError(e));
   }
 
-  buffer.subscribe((b) => {
-    if (!b) {
-      return;
-    }
-
+  $: if ($buffer) {
     loading = true;
+    renderer?.clear();
 
-    SpectrogramData.createFromAudioBuffer(b, {
+    SpectrogramData.createFromAudioBuffer($buffer, {
       webWorker:
         (import.meta.env.PROD && workerSupport > 0) ||
         (import.meta.env.DEV && workerSupport > 1),
-      windowSize: 2048,
+      ...$settings,
     })
-      .then((spectrogramData) => {
-        data = spectrogramData;
+      .then((res) => {
+        data = res;
       })
       .catch((e: Error) => {
         setError(e);
@@ -56,7 +53,7 @@
       });
 
     setError(null);
-  });
+  }
 
   onMount(() => {
     renderer = new SpectrogramRenderer(getCanvas());

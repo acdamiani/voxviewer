@@ -43,7 +43,7 @@ export default class SpectrogramRenderer {
     const winOffset =
       (this._spectrogram.info.windowSize *
         this._spectrogram.info.zeroPaddingFactor) /
-      2;
+      (this._spectrogram.info.overlap ? 2 : 1);
     const bgCol = this._spectrogram.rgbBackground;
 
     for (
@@ -97,7 +97,9 @@ export default class SpectrogramRenderer {
 
   private _draw(ctx: CanvasRenderingContext2D, zoom: number, pan: number) {
     const samplesPerPixel = zoom * WAVEFORM_BASE_SAMPLES_PER_PIXEL;
-    const zoomRatio = (samplesPerPixel * 2) / this._spectrogram.info.windowSize;
+    const zoomRatio =
+      (samplesPerPixel * (this._spectrogram.info.overlap ? 2 : 1)) /
+      this._spectrogram.info.windowSize;
     const chunkSize = SPECTROGRAM_CHUNK_SIZE / zoomRatio;
 
     let w = -pan,
@@ -166,5 +168,17 @@ export default class SpectrogramRenderer {
         resolve();
       });
     });
+  }
+
+  clear() {
+    const ctx = this.canvas.getContext('2d');
+
+    if (!ctx) {
+      throw new Error('Error initializing spectrogram canvas');
+    }
+
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    console.log('going');
   }
 }

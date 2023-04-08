@@ -108,6 +108,7 @@ export default class JsSpectrogram {
       const arr = new Uint8Array(bins * windows * 3);
 
       spectrogram.compute(arr);
+      spectrogram.free();
 
       return new JsSpectrogram(arr, bins, windows, inputOptions, bg, id);
     });

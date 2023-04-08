@@ -26,7 +26,7 @@ module.exports = {
       },
 
       animation: {
-        scale: 'scale 2s cubic-bezier(0.87, 0, 0.13, 1) infinite forwards',
+        scale: 'scale 2s cubic-bezier(0.5, 1, 0.89, 1) infinite forwards',
         spurt: 'spurt 2s cubic-bezier(0.25, 1, 0.5, 1) infinite forwards',
         fade: 'fade 200ms ease-out',
       },
