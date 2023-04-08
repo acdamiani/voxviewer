@@ -13,7 +13,7 @@
   };
 
   const mouseMove = (e: MouseEvent) => {
-    position = Math.max(padding, e.clientX - offset);
+    position = e.clientX - offset;
 
     if (dragging) {
       $player.seek(fromPixel(position));
@@ -25,8 +25,6 @@
   $: if (clickableArea) {
     offset = clickableArea.getBoundingClientRect().left;
   }
-
-  export let padding = 0;
 
   let dragging: boolean;
 
@@ -61,12 +59,15 @@
 
 <svelte:window
   on:mousemove={mouseMove}
-  on:mousedown={mouseDown}
-  on:mouseup={mouseUp}
 />
 
 {#if $buffer}
-  <div class="block absolute inset-0 invisible" bind:this={clickableArea} />
+  <div
+    class="block absolute inset-0 opacity-0 z-10"
+    bind:this={clickableArea}
+    on:mousedown={mouseDown}
+    on:mouseup={mouseUp}
+  />
 
   <div
     class="absolute inset-0 right-auto w-px bg-neutral-700 bg-opacity-25"

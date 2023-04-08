@@ -5,7 +5,17 @@
   import Waveform from './waveform/Waveform.svelte';
   import Spectrogram from './spectrogram/Spectrogram.svelte';
   import Playhead from './Playhead.svelte';
-  import { HORIZONTAL_TICKER_PADDING } from '$lib/util/constants';
+
+  let viewConfig: { view: 'waveform' | 'spectrogram'; channel: 0 | 1 }[] = [
+    {
+      view: 'waveform',
+      channel: 0,
+    },
+    {
+      view: 'spectrogram',
+      channel: 0,
+    },
+  ];
 </script>
 
 <div class="w-full flex flex-col overflow-y-auto overflow-x-hidden">
@@ -16,16 +26,30 @@
 
   <div class="relative h-full flex flex-col">
     <!--Waveform-->
-    <ViewFrame title="waveform">
-      <Waveform />
+    <ViewFrame
+      bind:view={viewConfig[0].view}
+      bind:channel={viewConfig[0].channel}
+    >
+      {#if viewConfig[0].view === 'waveform'}
+        <Waveform channel={viewConfig[0].channel}/>
+      {:else}
+        <Spectrogram channel={viewConfig[0].channel}/>
+      {/if}
     </ViewFrame>
 
     <!--Spectrogram-->
-    <ViewFrame title="spectrogram">
-      <Spectrogram />
+    <ViewFrame
+      bind:view={viewConfig[1].view}
+      bind:channel={viewConfig[1].channel}
+    >
+      {#if viewConfig[1].view === 'waveform'}
+        <Waveform channel={viewConfig[1].channel} />
+      {:else}
+        <Spectrogram channel={viewConfig[1].channel}/>
+      {/if}
     </ViewFrame>
 
-    <Playhead padding={HORIZONTAL_TICKER_PADDING} />
+    <Playhead />
   </div>
 
   <Controls />

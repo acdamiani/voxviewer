@@ -29,7 +29,7 @@
   });
 
   $: if (data) {
-    renderer.render(data, 0, $zoom, $pan).catch((e) => setError(e));
+    renderer.render(data, channel, $zoom, $pan).catch((e) => setError(e));
   }
 
   $: if ($buffer) {
@@ -65,10 +65,12 @@
     clearTimeout(resizeId);
     resizeId = setTimeout(() => {
       if (data) {
-        renderer.render(data, 0, $zoom, $pan).catch((e) => setError(e));
+        renderer.render(data, channel, $zoom, $pan).catch((e) => setError(e));
       }
     }, 100);
   };
+
+  export let channel: 0 | 1 = 0;
 </script>
 
 <svelte:window on:resize={onResize} />

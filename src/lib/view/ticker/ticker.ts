@@ -1,6 +1,5 @@
 import decimal from 'decimal.js';
 import {
-  HORIZONTAL_TICKER_PADDING,
   TICKER_PIXEL_SPACING,
   WAVEFORM_BASE_SAMPLES_PER_PIXEL,
 } from '$lib/util/constants';
@@ -20,7 +19,7 @@ export default class Ticker {
 
   constructor(config: TickerConfig) {
     const values = {
-      padding: HORIZONTAL_TICKER_PADDING,
+      padding: 0,
       ...config,
     };
 
@@ -116,7 +115,7 @@ export default class Ticker {
       ctx.fillRect(x - 1, this._canvas.height - height, 2, height);
 
       if (sig) {
-        ctx.fillText(time.toString(), x, this._canvas.height - height - 8);
+        ctx.fillText(time.toString(), x + 14, this._canvas.height - height + 8);
       }
 
       time = time.plus(step);

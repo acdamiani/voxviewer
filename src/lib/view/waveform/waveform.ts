@@ -16,7 +16,7 @@ export default class WaveformRenderer {
     return height - ((amplitude + offset) * height) / range;
   }
 
-  private _draw(data: WaveformData, offset: number) {
+  private _draw(data: WaveformData, channel: number, offset: number) {
     const ctx = this.canvas.getContext('2d');
 
     if (!ctx) {
@@ -28,18 +28,18 @@ export default class WaveformRenderer {
     ctx.beginPath();
 
     ctx.fillStyle = 'rgb(20 184 166)';
-    const channel = data.channel(0);
+    const channelData = data.channel(channel);
 
     const len = Math.min(data.length - offset, this.canvas.width);
 
     for (let x = 0; x < len; x++) {
-      const val = channel.max_sample(x + offset);
+      const val = channelData.max_sample(x + offset);
 
       ctx.lineTo(x + 0.5, this._scaleHeight(val, this.canvas.height) + 0.5);
     }
 
     for (let x = len - 1; x >= 0; x--) {
-      const val = channel.min_sample(x + offset);
+      const val = channelData.min_sample(x + offset);
 
       ctx.lineTo(x + 0.5, this._scaleHeight(val, this.canvas.height) + 0.5);
     }
@@ -57,11 +57,11 @@ export default class WaveformRenderer {
     }
   }
 
-  async render(waveform: WaveformData, zoom: number, pan: number) {
+  async render(waveform: WaveformData, channel: number, zoom: number, pan: number) {
     const resampled = waveform.resample({
       scale: zoom * WAVEFORM_BASE_SAMPLES_PER_PIXEL,
     });
-    this._draw(resampled, Math.round(pan));
+    this._draw(resampled, channel, Math.round(pan));
     this._lastZoom = zoom;
   }
 }

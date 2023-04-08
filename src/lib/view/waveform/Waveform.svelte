@@ -39,6 +39,7 @@
       {
         audio_buffer: b,
         scale: WAVEFORM_BASE_SAMPLES_PER_PIXEL,
+        split_channels: true,
       },
       (err, waveformData) => {
         if (err) {
@@ -52,7 +53,7 @@
   });
 
   $: if (data) {
-    renderer.render(data, $zoom, $pan).catch((e) => setError(e));
+    renderer.render(data, channel, $zoom, $pan).catch((e) => setError(e));
   }
 
   onMount(() => {
@@ -65,10 +66,12 @@
     clearTimeout(resizeId);
     resizeId = setTimeout(() => {
       if (data) {
-        renderer.render(data, $zoom, $pan).catch((e) => setError(e));
+        renderer.render(data, channel, $zoom, $pan).catch((e) => setError(e));
       }
     }, 100);
   };
+
+  export let channel: 0 | 1 = 0;
 </script>
 
 <svelte:window on:resize={onResize} />
