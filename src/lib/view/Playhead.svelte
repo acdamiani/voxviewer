@@ -13,7 +13,7 @@
   };
 
   const mouseMove = (e: MouseEvent) => {
-    position = e.clientX - offset;
+    position = Math.max(0, e.clientX - offset);
 
     if (dragging) {
       $player.seek(fromPixel(position));
@@ -57,16 +57,13 @@
   };
 </script>
 
-<svelte:window
-  on:mousemove={mouseMove}
-/>
+<svelte:window on:mousemove={mouseMove} on:mouseup={mouseUp}/>
 
 {#if $buffer}
   <div
     class="block absolute inset-0 opacity-0 z-10"
     bind:this={clickableArea}
     on:mousedown={mouseDown}
-    on:mouseup={mouseUp}
   />
 
   <div
