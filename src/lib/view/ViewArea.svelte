@@ -31,9 +31,9 @@
       bind:channel={viewConfig[0].channel}
     >
       {#if viewConfig[0].view === 'waveform'}
-        <Waveform channel={viewConfig[0].channel}/>
+        <Waveform channel={viewConfig[0].channel} />
       {:else}
-        <Spectrogram channel={viewConfig[0].channel}/>
+        <Spectrogram channel={viewConfig[0].channel} />
       {/if}
     </ViewFrame>
 
@@ -45,7 +45,7 @@
       {#if viewConfig[1].view === 'waveform'}
         <Waveform channel={viewConfig[1].channel} />
       {:else}
-        <Spectrogram channel={viewConfig[1].channel}/>
+        <Spectrogram channel={viewConfig[1].channel} />
       {/if}
     </ViewFrame>
 

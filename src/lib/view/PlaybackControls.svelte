@@ -1,5 +1,5 @@
 <script>
-  import { player } from '$lib/stores';
+  import { buffer, player, playerPosition } from '$lib/stores';
   import IconButton from '$lib/controls/IconButton.svelte';
   import IconStepBackwards from '~icons/fa6-solid/backward-step';
   import IconStepForwards from '~icons/fa6-solid/forward-step';
@@ -13,7 +13,15 @@
 </script>
 
 <div class="flex items-center gap-6">
-  <IconButton icon={IconStepBackwards} {disabled} />
+  <IconButton
+    icon={IconStepBackwards}
+    {disabled}
+    on:click={() => $player.seek(0)}
+  />
   <PlaybackButton />
-  <IconButton icon={IconStepForwards} {disabled} />
+  <IconButton
+    icon={IconStepForwards}
+    {disabled}
+    on:click={() => $player.seek($buffer.duration)}
+  />
 </div>

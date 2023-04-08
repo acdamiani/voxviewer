@@ -57,7 +57,7 @@
   };
 </script>
 
-<svelte:window on:mousemove={mouseMove} on:mouseup={mouseUp}/>
+<svelte:window on:mousemove={mouseMove} on:mouseup={mouseUp} />
 
 {#if $buffer}
   <div

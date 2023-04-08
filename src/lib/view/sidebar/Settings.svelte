@@ -85,7 +85,7 @@
   <Group>
     <span slot="title">Window Size</span>
     <Slider
-      min={2}
+      min={3}
       max={13}
       minLabel="8"
       maxLabel="8192"
