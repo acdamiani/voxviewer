@@ -23,7 +23,7 @@
   on:click={() => (open = false)}
 >
   <div
-    class="relative max-w-xl bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl p-4 {open
+    class="relative min-w-[12rem] max-w-xl bg-neutral-900 border border-neutral-800 rounded-lg shadow-xl p-4 {open
       ? 'scale-100'
       : 'scale-90'} transition-transform"
     on:click|stopPropagation

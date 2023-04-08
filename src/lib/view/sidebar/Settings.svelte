@@ -22,6 +22,7 @@
 
   import IconWelchOverlap from '~icons/window-functions/welch-overlap';
   import IconBartlettOverlap from '~icons/window-functions/bartlett-overlap';
+  import Shortcut from '$lib/controls/Shortcut.svelte';
 
   let file: File | undefined = undefined;
   let audioFile: AudioFile | null = null;
@@ -59,7 +60,7 @@
     });
 
     loadFile();
-  }
+  };
 </script>
 
 <div class="flex flex-col gap-3">
@@ -111,4 +112,6 @@
     <IconSearch slot="icon" />
     Analyze</Button
   >
+
+  <Shortcut type="mouse">Hey</Shortcut>
 </div>

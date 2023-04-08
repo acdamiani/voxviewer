@@ -1,15 +1,16 @@
 <script lang="ts">
   import IconSun from '~icons/octicon/sun-24';
   import IconMoon from '~icons/octicon/moon-24';
-  import IconInfo from '~icons/octicon/info-24';
-  import IconGithub from '~icons/octicon/mark-github-16';
+  import IconQuestion from '~icons/octicon/question-24';
   import NavbarButton from './NavbarButton.svelte';
   import Modal from '../Modal.svelte';
   import Profile from '$lib/assets/profile.png';
   import Signature from '$lib/assets/signature.png';
+  import Shortcut from '$lib/controls/Shortcut.svelte';
 
   let dark = true;
   let infoModal = false;
+  let commandModal = false;
 </script>
 
 <div
@@ -46,14 +47,18 @@
       {/if}
     </NavbarButton>
 
-    <a href="https://github.com/acdamiani/peekyourvoice">
-      <NavbarButton>
-        <IconGithub class="text-2xl" />
-      </NavbarButton>
-    </a>
+    <!-- <a href="https://github.com/acdamiani/peekyourvoice"> -->
+    <!--   <NavbarButton> -->
+    <!--     <IconGithub class="text-2xl" /> -->
+    <!--   </NavbarButton> -->
+    <!-- </a> -->
+
+    <NavbarButton on:click={() => (commandModal = !commandModal)}>
+      <span class="text-4xl leading-none">⌘</span>
+    </NavbarButton>
 
     <NavbarButton on:click={() => (infoModal = !infoModal)}>
-      <IconInfo />
+      <IconQuestion />
     </NavbarButton>
   </div>
 </div>
@@ -126,5 +131,22 @@
         />
       </div>
     </div>
+  </div>
+</Modal>
+
+<Modal bind:open={commandModal}>
+  <span slot="title">Commands</span>
+  <div class="flex flex-col min-w-[24rem]">
+    <Shortcut keys={['Ctrl', 'mouse-middle']}>Zoom (Scroll)</Shortcut>
+    <Shortcut keys={['Ctrl', '-']}>Zoom In</Shortcut>
+    <Shortcut keys={['Ctrl', '=']}>Zoom Out</Shortcut>
+    <Shortcut keys={['mouse-middle']}>Pan</Shortcut>
+    <Shortcut keys={['a']}>Pan Left</Shortcut>
+    <Shortcut keys={['d']}>Pan Right</Shortcut>
+    <Shortcut keys={['←']}>Pan Left</Shortcut>
+    <Shortcut keys={['→']}>Pan Right</Shortcut>
+    <Shortcut keys={['Space']}>Play/Pause</Shortcut>
+    <Shortcut keys={['Home']}>Skip to Start</Shortcut>
+    <Shortcut keys={['End']}>Skip to End</Shortcut>
   </div>
 </Modal>
