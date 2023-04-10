@@ -33,7 +33,7 @@
     "tailwind-scrollbar-hide": "1.1.7",
     "tailwindcss": "3.3.1",
     "tslib": "2.5.0",
-    "typescript": "5.0.3",
+    "typescript": "5.0.4",
     "unplugin-icons": "0.16.1",
     "vite": "4.2.1",
     "vite-plugin-wasm-pack": "0.1.12"
