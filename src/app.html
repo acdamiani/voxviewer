@@ -11,11 +11,19 @@
       crossorigin
     />
     <meta name="viewport" content="width=device-width" />
+    <script id="get-color-scheme" strategy="beforeInteractive">
+      (() => {
+        const e = localStorage.getItem('color-theme'),
+          a = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        (!e || e === 'auto' ? a : e === 'dark') &&
+          document.documentElement.classList.add('dark');
+      })();
+    </script>
     %sveltekit.head%
   </head>
   <body
     data-sveltekit-preload-data="hover"
-    class="antialiased text-neutral-500 bg-neutral-950 overflow-x-hidden select-none"
+    class="antialiased text-neutral-700 dark:text-neutral-500 bg-neutral-50 dark:bg-neutral-950 overflow-x-hidden select-none"
   >
     <div style="display: contents">%sveltekit.body%</div>
   </body>

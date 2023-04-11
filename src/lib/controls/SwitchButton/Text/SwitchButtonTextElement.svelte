@@ -9,8 +9,8 @@
   let selectedStyle: string;
 
   $: selectedStyle = $selected
-    ? 'bg-neutral-800 text-white shadow-highlight'
-    : 'text-neutral-400';
+    ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-50 shadow-highlight'
+    : 'text-neutral-600 dark:text-neutral-400';
 </script>
 
 <div class="w-full rounded-lg transition-colors p-2 {selectedStyle}">

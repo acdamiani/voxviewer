@@ -9,15 +9,15 @@
   let selectedStyle: string;
 
   $: selectedStyle = $selected
-    ? 'bg-neutral-800 text-white shadow-highlight'
-    : 'text-neutral-400';
+    ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-50 shadow-highlight'
+    : 'text-neutral-600 dark:text-neutral-400';
 </script>
 
 <div
   class="w-full rounded-lg transition-colors {selectedStyle} flex flex-col items-center justify-center h-16 gap-1"
 >
   <div
-    class="flex relative rounded-lg border border-neutral-300 border-opacity-30 overflow-hidden px-0.5 pt-1"
+    class="flex relative rounded-lg border border-neutral-500 dark:border-neutral-500 border-opacity-30 overflow-hidden px-0.5 pt-1"
   >
     <slot />
   </div>

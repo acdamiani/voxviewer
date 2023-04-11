@@ -9,7 +9,9 @@
   let selected: 'settings' | 'export' = 'settings';
   let scrollElement: HTMLDivElement;
   let scrolled = false;
-  $: borderStyle = scrolled ? 'border-neutral-800' : 'border-neutral-900';
+  $: borderStyle = scrolled
+    ? 'border-neutral-200 dark:border-neutral-800'
+    : 'border-neutral-100 dark:border-neutral-900';
 
   onMount(() => {
     scrollElement.addEventListener('scroll', () => {
@@ -19,25 +21,14 @@
 </script>
 
 <div
-  class="relative flex flex-col w-[21rem] rounded-xl bg-neutral-900 overflow-y-auto scrollbar-hide shadow-lg border border-neutral-800 h-full"
+  class="relative flex flex-col w-[21rem] rounded-xl bg-neutral-100 dark:bg-neutral-900 overflow-y-auto scrollbar-hide shadow-lg border border-neutral-200 dark:border-neutral-800 h-full"
   bind:this={scrollElement}
 >
   <div
-    class="flex min-h-[49px] items-center sticky top-0 rounded-lg rounded-b-none gap-2 justify-around z-20 px-4 bg-neutral-900 border-b transition-colors {borderStyle}"
+    class="flex min-h-[49px] items-center sticky top-0 rounded-lg rounded-b-none gap-2 justify-around z-20 px-4 bg-neutral-100 dark:bg-neutral-900 border-b transition-colors {borderStyle}"
   >
-    <SidebarTabButton
-      selected={selected === 'settings'}
-      on:click={() => (selected = 'settings')}
-    >
-      <IconGear slot="icon" />
-      Settings</SidebarTabButton
-    >
-    <SidebarTabButton
-      selected={selected === 'export'}
-      on:click={() => (selected = 'export')}
-    >
-      <IconExport slot="icon" />
-      Export</SidebarTabButton
+    <span class="text-xl font-semibold text-neutral-950 dark:text-neutral-50"
+      >Settings</span
     >
   </div>
   <div class="p-4">
