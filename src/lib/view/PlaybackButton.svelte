@@ -26,7 +26,7 @@
 </script>
 
 <button
-  class="w-16 h-16 flex items-center justify-center bg-teal-500 hover:bg-teal-400 text-neutral-100 rounded-full shadow-highlight disabled:bg-teal-800 disabled:text-neutral-500"
+  class="w-16 h-16 flex items-center justify-center bg-teal-500 hover:bg-teal-400 text-neutral-900 dark:text-neutral-100 rounded-full shadow-highlight disabled:opacity-50 dark:disabled:bg-teal-800 disabled:text-neutral-500"
   on:click={toggleState}
   {disabled}
 >

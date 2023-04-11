@@ -38,7 +38,7 @@
 </script>
 
 <div
-  class="relative p-2 bg-neutral-900 rounded-xl border border-neutral-800 flex flex-col items-center text-xl gap-2"
+  class="relative p-2 bg-neutral-100 dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 flex flex-col items-center text-xl gap-2"
 >
   <svg
     width="36"
@@ -58,7 +58,9 @@
     <rect x="50" y="23" width="8" height="18" rx="4" fill="#FC8961" />
   </svg>
 
-  <span class="absolute left-0 right-0 top-12 h-px bg-neutral-800" />
+  <span
+    class="absolute left-0 right-0 top-12 h-px bg-neutral-200 dark:bg-neutral-800"
+  />
 
   <!-- <span class="inline-block -mt-px w-full h-px bg-neutral-800" /> -->
 
@@ -100,9 +102,13 @@
 
 <Modal bind:open={infoModal}>
   <span slot="title">About</span>
-  <div class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-4">
-    <span class="text-xl text-neutral-50 font-semibold">The Project</span>
-    <p class="text-neutral-400">
+  <div
+    class="w-full bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg p-4"
+  >
+    <span class="text-xl text-neutral-950 dark:text-neutral-50 font-semibold"
+      >The Project</span
+    >
+    <p class="text-neutral-600 dark:text-neutral-400">
       A project for the 2023 <a
         href="https://hack.sveltesociety.dev/"
         class="text-teal-500 hover:text-teal-400 transition-colors"
@@ -114,7 +120,7 @@
   </div>
   <div class="w-full flex gap-2">
     <div
-      class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-4 flex items-center justify-center gap-0.5"
+      class="w-full bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg p-4 flex items-center justify-center gap-0.5"
     >
       <svg
         width="64"
@@ -135,14 +141,20 @@
       </svg>
       <div />
       <span class="flex">
-        <span class="text-3xl text-neutral-50 font-bold">vox</span>
-        <span class="text-3xl text-neutral-50">viewer</span>
+        <span class="text-3xl text-neutral-950 dark:text-neutral-50 font-bold"
+          >vox</span
+        >
+        <span class="text-3xl text-neutral-950 dark:text-neutral-50"
+          >viewer</span
+        >
       </span>
     </div>
     <div
-      class="w-fit flex-shrink-0 bg-neutral-800 border border-neutral-700 rounded-lg p-4"
+      class="w-fit flex-shrink-0 bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg p-4"
     >
-      <span class="text-xl text-neutral-50 font-semibold">Made with ❤️</span>
+      <span class="text-xl text-neutral-950 dark:text-neutral-50 font-semibold"
+        >Made with ❤️</span
+      >
       <div class="mt-4 flex w-full items-center gap-4 justify-center">
         <a
           class="scale-100 hover:scale-105 transition-transform"
@@ -158,7 +170,7 @@
         </a>
 
         <img
-          class="rounded-full"
+          class="rounded-full invert dark:invert-0"
           src={Signature}
           alt="profile"
           width="92.25"

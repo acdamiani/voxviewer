@@ -10,12 +10,12 @@
 
   let selectedStyle: string;
 
-  $: selectedStyle = $selected ? 'ring-opacity-100' : 'ring-opacity-0';
+  $: selectedStyle = $selected ? 'ring-1' : 'ring-0';
 </script>
 
 <div class="w-full flex items-center justify-center">
   <span
-    class="w-full rounded-md bg-cover aspect-[16/10] ring-1 ring-offset-2 ring-offset-zinc-900 ring-white transition-shadow {selectedStyle}"
+    class="w-full rounded-md bg-cover aspect-[16/10] ring-offset-2 ring-offset-neutral-100 dark:ring-offset-neutral-900 ring-neutral-950 dark:ring-neutral-50 transition-shadow {selectedStyle}"
     style="background-image: url({url});"
   />
 </div>
