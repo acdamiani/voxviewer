@@ -11,6 +11,14 @@
       crossorigin
     />
     <meta name="viewport" content="width=device-width" />
+    <script id="get-color-scheme" strategy="beforeInteractive">
+      (() => {
+        const e = localStorage.getItem('color-theme'),
+          a = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        (!e || e === 'auto' ? a : e === 'dark') &&
+          document.documentElement.classList.add('dark');
+      })();
+    </script>
     %sveltekit.head%
   </head>
   <body
