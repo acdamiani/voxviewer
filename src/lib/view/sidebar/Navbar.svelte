@@ -7,10 +7,34 @@
   import Profile from '$lib/assets/profile.png';
   import Signature from '$lib/assets/signature.png';
   import Shortcut from '$lib/controls/Shortcut.svelte';
+  import { onMount } from 'svelte';
 
-  let dark = true;
   let infoModal = false;
   let commandModal = false;
+
+  let dark = false;
+  onMount(() => {
+    dark = document.documentElement.classList.contains('dark');
+  });
+
+  const toggleTheme = () => {
+    const currentTheme = !document.documentElement.classList.contains(`dark`);
+    const prefersDark = window.matchMedia(`(prefers-color-scheme: dark)`);
+
+    localStorage.setItem(
+      `color-theme`,
+      prefersDark.matches === currentTheme
+        ? `auto`
+        : currentTheme
+        ? `dark`
+        : `light`,
+    );
+
+    if (currentTheme) document.documentElement.classList.add(`dark`);
+    else document.documentElement.classList.remove(`dark`);
+
+    dark = currentTheme;
+  };
 </script>
 
 <div
@@ -39,7 +63,7 @@
   <!-- <span class="inline-block -mt-px w-full h-px bg-neutral-800" /> -->
 
   <div class="flex flex-col h-full gap-2 justify-end">
-    <NavbarButton on:click={() => (dark = !dark)}>
+    <NavbarButton on:click={toggleTheme}>
       {#if dark}
         <IconMoon />
       {:else}
