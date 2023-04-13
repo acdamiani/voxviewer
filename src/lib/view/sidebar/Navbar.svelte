@@ -73,12 +73,6 @@
       {/if}
     </NavbarButton>
 
-    <!-- <a href="https://github.com/acdamiani/peekyourvoice"> -->
-    <!--   <NavbarButton> -->
-    <!--     <IconGithub class="text-2xl" /> -->
-    <!--   </NavbarButton> -->
-    <!-- </a> -->
-
     <NavbarButton on:click={() => (commandModal = !commandModal)}>
       <svg
         width="24"

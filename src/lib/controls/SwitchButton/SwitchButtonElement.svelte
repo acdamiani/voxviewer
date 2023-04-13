@@ -5,7 +5,7 @@
 
   const button = shortid.generate();
 
-  const { selectedOption }: any = getContext('__pyv_switch_button');
+  const { selectedOption }: any = getContext('__vv_switch_button');
 
   export let value: string | undefined = undefined;
 
@@ -18,7 +18,7 @@
     setSelected(cur === (value ?? button));
   });
 
-  $: setContext('__pyv_switch_button_element', {
+  $: setContext('__vv_switch_button_element', {
     selected: selected,
   });
 </script>

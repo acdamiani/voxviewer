@@ -7,12 +7,12 @@
   let htmlCanvas: HTMLCanvasElement;
   let offscreenCanvas: HTMLCanvasElement;
 
-  setContext('__pyv_canvas', {
+  setContext('__vv_canvas', {
     getCanvas: () => htmlCanvas,
     getOffscreenCanvas: () => offscreenCanvas,
   });
 
-  setContext('__pyv_error', {
+  setContext('__vv_error', {
     setError: (err: Error | null) => (error = err),
   });
 

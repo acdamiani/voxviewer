@@ -10,13 +10,13 @@
     getCanvas,
   }: {
     getCanvas: () => HTMLCanvasElement;
-  } = getContext('__pyv_canvas');
+  } = getContext('__vv_canvas');
 
   const {
     setError,
   }: {
     setError: (err: Error | null) => void;
-  } = getContext('__pyv_error');
+  } = getContext('__vv_error');
 
   let data: SpectrogramData;
   let renderer: SpectrogramRenderer;

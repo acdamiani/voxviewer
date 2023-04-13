@@ -9,7 +9,7 @@
 
   let selectedOption = writable<string | undefined>(value);
 
-  setContext('__pyv_switch_button', {
+  setContext('__vv_switch_button', {
     selectedOption,
   });
 

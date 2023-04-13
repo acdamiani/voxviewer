@@ -3,7 +3,7 @@
   import type { Readable } from 'svelte/store';
 
   const { selected }: { selected: Readable<boolean> } = getContext(
-    '__pyv_switch_button_element',
+    '__vv_switch_button_element',
   );
 
   export let url: string | URL | undefined = undefined;
