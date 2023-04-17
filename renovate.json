@@ -1,15 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
+  "extends": ["config:base"],
   "stabilityDays": 3,
   "prCreation": "immediate",
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
-    },
+    }
   ],
-  "assignees": ["acdamiani"],
+  "assignees": ["acdamiani"]
 }
