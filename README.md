@@ -24,7 +24,7 @@
 
 <br />
 
-My entry for the SvelteHack 2023 competition. An experiment with WebAssembly, Web Workers, SvelteKit, and the Web Audio API.
+My entry for the SvelteHack 2023 competition. An experiment with WebAssembly, Web Workers, SvelteKit, and the Web Audio API. Check out the live demo at <a href="https://voxviewer.vercel.app">https://voxviewer.vercel.app</a>
 
 ## Requirements
 
