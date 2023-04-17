@@ -67,12 +67,12 @@
       style="width: {left * 100}%;"
     />
     <div
-      class="absolute left-0 top-1/2 block h-6 w-3 rounded-lg bg-neutral-300 dark:bg-neutral-700 -translate-y-1/2 -translate-x-1/2 shadow-highlight"
+      class="absolute left-0 top-1/2 h-6 w-3 rounded-lg bg-neutral-300 dark:bg-neutral-700 -translate-y-1/2 -translate-x-1/2 shadow-lg shadow-neutral-950/50"
       style="left: {left * 100}%;"
     >
       <input type="hidden" {min} {max} {step} {value} {name} />
       <span
-        class="absolute left-1/2 -bottom-8 -translate-x-1/2 bg-neutral-50 dark:bg-neutral-950 rounded-md px-2 text-neutral-600 dark:text-neutral-400"
+        class="absolute left-1/2 -bottom-8 -translate-x-1/2 bg-neutral-200 dark:bg-neutral-950 rounded-md px-2 text-neutral-600 dark:text-neutral-400"
         >{displayValue(value)}</span
       >
     </div>

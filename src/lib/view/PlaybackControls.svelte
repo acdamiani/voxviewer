@@ -1,5 +1,5 @@
 <script>
-  import { buffer, player, playerPosition } from '$lib/stores';
+  import { buffer, player } from '$lib/stores';
   import IconButton from '$lib/controls/IconButton.svelte';
   import IconStepBackwards from '~icons/fa6-solid/backward-step';
   import IconStepForwards from '~icons/fa6-solid/forward-step';

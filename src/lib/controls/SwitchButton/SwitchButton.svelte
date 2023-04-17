@@ -20,7 +20,7 @@
   });
 
   const backgroundStyle = background
-    ? 'bg-neutral-50 dark:bg-neutral-950 rounded-lg p-2'
+    ? 'bg-neutral-200 dark:bg-neutral-950 rounded-lg p-2'
     : '';
   const gapStyle = gap === 'none' ? 'gap-0' : 'gap-2';
 </script>

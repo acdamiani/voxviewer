@@ -9,7 +9,7 @@
   let selectedStyle: string;
 
   $: selectedStyle = $selected
-    ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-50 shadow-highlight'
+    ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-950 dark:text-neutral-50 shadow-md shadow-black/25'
     : 'text-neutral-600 dark:text-neutral-400';
 </script>
 

@@ -21,7 +21,7 @@
 </script>
 
 <div
-  class="relative flex flex-col w-[21rem] rounded-xl bg-neutral-100 dark:bg-neutral-900 overflow-y-auto scrollbar-hide shadow-lg border border-neutral-200 dark:border-neutral-800 h-full"
+  class="relative flex flex-col w-[21rem] rounded-xl bg-neutral-100 dark:bg-neutral-900 overflow-y-auto scrollbar-hide border border-neutral-200 dark:border-neutral-800 h-full"
   bind:this={scrollElement}
 >
   <div
