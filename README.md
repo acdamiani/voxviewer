@@ -17,11 +17,7 @@ To run this project locally, you'll need the following software installed:
 
 ## See the project in action
 
-<div align="center">
-    <video width="760" height="480" controls>
-      <source src="https://user-images.githubusercontent.com/65556364/232363899-1b2f4353-aa2d-4634-8e87-f1c084aa17eb.mp4" type="video/mp4">
-    </video>
-</div>
+![preview](https://user-images.githubusercontent.com/65556364/232363899-1b2f4353-aa2d-4634-8e87-f1c084aa17eb.mp4)
 
 ## Running the Project
 
