@@ -4,6 +4,26 @@
     <img src="https://user-images.githubusercontent.com/65556364/232362028-58da415d-2202-4b65-961b-907876547142.png" alt=""/>
 </div>
 
+<br />
+
+<div align="center">
+    <strong>An Audio Experiment</strong>
+</div>
+<div align="center">
+    Built with <a href="https://kit.svelte.dev/">SvelteKit</a>
+</div>
+
+<br />
+
+<div align="center">
+    <img src="https://shields.io/github/actions/workflow/status/acdamiani/voxviewer/ci.yml?style=flat-square&color=14b8a6" alt="Build" />
+    <img alt="Language" src="https://img.shields.io/github/languages/top/acdamiani/voxviewer?style=flat-square&color=14b8a6" />
+    <img alt="Issues" src="https://img.shields.io/github/issues/acdamiani/voxviewer?style=flat-square&color=14b8a6" />
+    <!-- <img src="https://shields.io/github/actions/workflow/status/acdamiani/voxviewer/ci.yml" alt="" /> -->
+</div>
+
+<br />
+
 My entry for the SvelteHack 2023 competition. An experiment with WebAssembly, Web Workers, SvelteKit, and the Web Audio API.
 
 ## Requirements
