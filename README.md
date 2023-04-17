@@ -17,7 +17,7 @@ To run this project locally, you'll need the following software installed:
 
 ## See the project in action
 
-![preview](https://user-images.githubusercontent.com/65556364/232363899-1b2f4353-aa2d-4634-8e87-f1c084aa17eb.mp4)
+https://user-images.githubusercontent.com/65556364/232364974-e6f58a2f-f4a6-4256-8115-b62e85550175.mp4
 
 ## Running the Project
 
