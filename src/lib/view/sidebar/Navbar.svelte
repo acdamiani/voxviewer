@@ -1,4 +1,7 @@
 <script lang="ts">
+  import IconGithub from '~icons/octicon/mark-github-16';
+  import IconLinkedin from '~icons/fa6-brands/linkedin';
+
   import IconSun from '~icons/octicon/sun-24';
   import IconMoon from '~icons/octicon/moon-24';
   import IconQuestion from '~icons/octicon/question-24';
@@ -172,6 +175,32 @@
         />
       </div>
     </div>
+  </div>
+  <div class="grid grid-rows-1 grid-cols-2 gap-2">
+    <a
+      class="bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg p-4 flex flex-col hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
+      href="https://github.com/acdamiani/voxviewer"
+    >
+      <span class="text-xl text-neutral-950 dark:text-neutral-50 font-semibold"
+        >Github</span
+      >
+      <p>Check out the source code for the project</p>
+      <span class="self-end text-2xl text-neutral-950 dark:text-neutral-50">
+        <IconGithub />
+      </span>
+    </a>
+    <a
+      href="https://www.linkedin.com/in/augustdamiani/"
+      class="bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg p-4 flex flex-col hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
+    >
+      <span class="text-xl text-neutral-950 dark:text-neutral-50 font-semibold"
+        >LinkedIn</span
+      >
+      <p>If you'd like to connect with me</p>
+      <span class="self-end text-2xl text-neutral-950 dark:text-neutral-50">
+        <IconLinkedin width="1em" height="1em" />
+      </span>
+    </a>
   </div>
 </Modal>
 

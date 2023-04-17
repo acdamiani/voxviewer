@@ -12,6 +12,9 @@ dependencies:
     version: 4.3.0
 
 devDependencies:
+  '@iconify-json/fa6-brands':
+    specifier: 1.1.11
+    version: 1.1.11
   '@iconify-json/fa6-solid':
     specifier: 1.1.13
     version: 1.1.13
@@ -546,6 +549,12 @@ packages:
 
   /@humanwhocodes/object-schema@1.2.1:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
+    dev: true
+
+  /@iconify-json/fa6-brands@1.1.11:
+    resolution: {integrity: sha512-+/dsIafxFCXlUvti0EHzVas9tnYXGqcSpybTBzzXbSVl2Ay1v26e/so/fz2Wrh8L3JrXq0LrMUYDsgZ4geQOqw==}
+    dependencies:
+      '@iconify/types': 2.0.0
     dev: true
 
   /@iconify-json/fa6-solid@1.1.13:
