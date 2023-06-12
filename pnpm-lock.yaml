@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -23,8 +23,8 @@ devDependencies:
     specifier: 1.1.13
     version: 1.1.13
   '@iconify-json/octicon':
-    specifier: 1.1.40
-    version: 1.1.40
+    specifier: 1.1.41
+    version: 1.1.41
   '@sveltejs/adapter-vercel':
     specifier: 2.4.3
     version: 2.4.3(@sveltejs/kit@1.20.2)
@@ -374,8 +374,8 @@ packages:
       '@iconify/types': 2.0.0
     dev: true
 
-  /@iconify-json/octicon@1.1.40:
-    resolution: {integrity: sha512-Pvw/Pcxfpk0dw9PWzSeiex+uIRh2aEzek951YfGJ5JwCj0g+QGxOt7Lv5kaMvuhd37Dme3K9vN/479yX/6IABw==}
+  /@iconify-json/octicon@1.1.41:
+    resolution: {integrity: sha512-cWZTZUIq5uQDaPSFNL5iAEn11QJZHtwJKIrLVMlBvz4T1RaoCK9u5/PblyXFYD74Dm5EK1ONi1+CXqRVxRfKYg==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true
