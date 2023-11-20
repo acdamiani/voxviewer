@@ -57,7 +57,12 @@ export default class WaveformRenderer {
     }
   }
 
-  async render(waveform: WaveformData, channel: number, zoom: number, pan: number) {
+  async render(
+    waveform: WaveformData,
+    channel: number,
+    zoom: number,
+    pan: number,
+  ) {
     const resampled = waveform.resample({
       scale: zoom * WAVEFORM_BASE_SAMPLES_PER_PIXEL,
     });

@@ -3,6 +3,8 @@
   import { zoom, pan, buffer, playerPositionPixels } from '$lib/stores';
   import { WAVEFORM_BASE_SAMPLES_PER_PIXEL } from '$lib/util/constants';
 
+  export let inView = false;
+
   let w: number;
   let h: number;
 
@@ -18,9 +20,6 @@
     }
 
     pan.set(0);
-    console.log(
-      $buffer.length / (WAVEFORM_BASE_SAMPLES_PER_PIXEL * canvas.width),
-    );
     zoom.set($buffer.length / (WAVEFORM_BASE_SAMPLES_PER_PIXEL * canvas.width));
   });
 
@@ -43,6 +42,12 @@
   }
 
   const keydown = (e: KeyboardEvent) => {
+    if (!inView) {
+      return;
+    }
+
+    e.stopPropagation();
+
     const now = Date.now();
 
     if (e.ctrlKey) {
@@ -77,6 +82,12 @@
   };
 
   const wheel = (e: WheelEvent) => {
+    if (!inView) {
+      return;
+    }
+
+    e.stopPropagation();
+
     const now = Date.now();
 
     if (e.ctrlKey) {
@@ -102,10 +113,7 @@
   };
 </script>
 
-<svelte:window
-  on:keydown|stopPropagation={keydown}
-  on:wheel|nonpassive|stopPropagation={wheel}
-/>
+<svelte:window on:keydown={keydown} on:wheel|nonpassive={wheel} />
 
 <div class="relative w-full h-full" bind:clientWidth={w} bind:clientHeight={h}>
   <canvas class="absolute top-0 left-0" bind:this={canvas} />

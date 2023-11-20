@@ -16,12 +16,21 @@
       channel: 0,
     },
   ];
+
+  let inView = false;
 </script>
 
-<div class="w-full flex flex-col overflow-y-auto overflow-x-hidden">
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div
+  class="w-full flex flex-col"
+  on:mouseenter={() => (inView = true)}
+  on:mouseleave={() => (inView = false)}
+>
   <!--Top Markers-->
+
   <div class="flex-none basis-14">
-    <Ticker />
+    <!-- Hacky hack -->
+    <Ticker {inView} />
   </div>
 
   <div class="relative h-full flex flex-col">
