@@ -12,8 +12,8 @@ dependencies:
     specifier: 2.2.16
     version: 2.2.16
   waveform-data:
-    specifier: 4.3.0
-    version: 4.3.0
+    specifier: 4.4.0
+    version: 4.4.0
 
 devDependencies:
   '@iconify-json/fa6-brands':
@@ -3017,8 +3017,8 @@ packages:
       vite: 4.5.1
     dev: true
 
-  /waveform-data@4.3.0:
-    resolution: {integrity: sha512-gddZgTV1dM8Mfaqn+mCJjwTAc7O/GbX2LgOrijRCHEGC60ZVdd/qTzrgEcCE5MfBoBPgwQ85huy1icSf5IZY5Q==}
+  /waveform-data@4.4.0:
+    resolution: {integrity: sha512-uQstBxUcv6lMtfVtVcfWWySuTt33FsSzWgnNvb5bNU5pjJkXKc3MwjGvWAKtI+X4ZxJHEvTT3n/fYXiOCFvrtg==}
     dev: false
 
   /webidl-conversions@3.0.1:
