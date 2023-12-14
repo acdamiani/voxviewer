@@ -15,7 +15,7 @@
     "format": "prettier --ignore-path .gitignore \"./src/**/*.+(ts|js|svelte|html)\" --write"
   },
   "devDependencies": {
-    "@iconify-json/fa6-brands": "1.1.17",
+    "@iconify-json/fa6-brands": "1.1.18",
     "@iconify-json/fa6-solid": "1.1.19",
     "@iconify-json/octicon": "1.1.51",
     "@sveltejs/adapter-vercel": "2.4.3",
