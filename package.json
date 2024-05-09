@@ -17,7 +17,7 @@
   "devDependencies": {
     "@iconify-json/fa6-brands": "1.1.19",
     "@iconify-json/fa6-solid": "1.1.21",
-    "@iconify-json/octicon": "1.1.52",
+    "@iconify-json/octicon": "1.1.54",
     "@sveltejs/adapter-vercel": "2.4.3",
     "@sveltejs/kit": "1.30.4",
     "@types/shortid": "0.0.32",
