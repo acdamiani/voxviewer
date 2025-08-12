@@ -23,8 +23,8 @@ devDependencies:
     specifier: 1.2.4
     version: 1.2.4
   '@iconify-json/octicon':
-    specifier: 1.2.2
-    version: 1.2.2
+    specifier: 1.2.10
+    version: 1.2.10
   '@sveltejs/adapter-vercel':
     specifier: 2.4.3
     version: 2.4.3(@sveltejs/kit@1.30.4)
@@ -604,8 +604,8 @@ packages:
       '@iconify/types': 2.0.0
     dev: true
 
-  /@iconify-json/octicon@1.2.2:
-    resolution: {integrity: sha512-qEPkP9DMMay5uILzyaSmVksSMxRw9i2wSDREfB8OK20mPdSadusjLqD/u69GzpFpw6894c+WNmoq7WzN5KAPeg==}
+  /@iconify-json/octicon@1.2.10:
+    resolution: {integrity: sha512-dAwgLd35EPeEu6VHnERJ+sSJ9VKe0qFX4EXHjmWb4o7OyUfB1/F98JEjUxVa9eEHJ307z4q0AuGSVz8L3LWz5g==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true
