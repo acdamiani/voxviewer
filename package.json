@@ -44,6 +44,6 @@
   "dependencies": {
     "decimal.js": "10.4.3",
     "shortid": "2.2.16",
-    "waveform-data": "4.5.0"
+    "waveform-data": "4.5.2"
   }
 }
