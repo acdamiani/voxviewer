@@ -20,7 +20,7 @@
     "@iconify-json/octicon": "1.2.19",
     "@sveltejs/adapter-vercel": "2.4.3",
     "@sveltejs/kit": "1.30.4",
-    "@types/shortid": "0.0.32",
+    "@types/shortid": "2.2.0",
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
     "autoprefixer": "10.4.22",
@@ -43,7 +43,7 @@
   "type": "module",
   "dependencies": {
     "decimal.js": "10.6.0",
-    "shortid": "2.2.16",
+    "shortid": "2.2.17",
     "waveform-data": "4.5.2"
   }
 }
