@@ -41,8 +41,8 @@ devDependencies:
     specifier: 5.62.0
     version: 5.62.0(eslint@8.57.1)(typescript@5.7.3)
   autoprefixer:
-    specifier: 10.4.23
-    version: 10.4.23(postcss@8.5.6)
+    specifier: 10.4.27
+    version: 10.4.27(postcss@8.5.6)
   eslint:
     specifier: 8.57.1
     version: 8.57.1
@@ -1106,15 +1106,15 @@ packages:
     resolution: {integrity: sha512-tLRNUXati5MFePdAk8dw7Qt7DpxPB60ofAgn8WRhW6a2rcimZnYBP9oxHiv0OHy+Wz7kPMG+t4LGdt31+4EmGg==}
     dev: true
 
-  /autoprefixer@10.4.23(postcss@8.5.6):
-    resolution: {integrity: sha512-YYTXSFulfwytnjAPlw8QHncHJmlvFKtczb8InXaAx9Q0LbfDnfEYDE55omerIJKihhmU61Ft+cAOSzQVaBUmeA==}
+  /autoprefixer@10.4.27(postcss@8.5.6):
+    resolution: {integrity: sha512-NP9APE+tO+LuJGn7/9+cohklunJsXWiaWEfV3si4Gi/XHDwVNgkwr1J3RQYFIvPy76GmJ9/bW8vyoU1LcxwKHA==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
     peerDependencies:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.28.1
-      caniuse-lite: 1.0.30001760
+      caniuse-lite: 1.0.30001781
       fraction.js: 5.3.4
       picocolors: 1.1.1
       postcss: 8.5.6
@@ -1173,7 +1173,7 @@ packages:
     hasBin: true
     dependencies:
       baseline-browser-mapping: 2.9.7
-      caniuse-lite: 1.0.30001760
+      caniuse-lite: 1.0.30001781
       electron-to-chromium: 1.5.267
       node-releases: 2.0.27
       update-browserslist-db: 1.2.2(browserslist@4.28.1)
@@ -1193,8 +1193,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /caniuse-lite@1.0.30001760:
-    resolution: {integrity: sha512-7AAMPcueWELt1p3mi13HR/LHH0TJLT11cnwDJEs3xA4+CK/PLKeO9Kl1oru24htkyUKtkGCvAx4ohB0Ttry8Dw==}
+  /caniuse-lite@1.0.30001781:
+    resolution: {integrity: sha512-RdwNCyMsNBftLjW6w01z8bKEvT6e/5tpPVEgtn22TiLGlstHOVecsX2KHFkD5e/vRnIE4EGzpuIODb3mtswtkw==}
     dev: true
 
   /chalk@4.1.2:
